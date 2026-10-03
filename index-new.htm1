@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OCG Custom Slab</title>
+
+<style>
+:root{
+  --navy:#071c31;
+  --gold:#f4b942;
+  --red:#e51d2a;
+  --ink:#0a1830;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:#fff;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 5%;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:900;
+  font-size:22px;
+  color:var(--navy);
+}
+
+.brand-badge{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--navy);
+  color:var(--gold);
+  border:2px solid var(--gold);
+  font-weight:900;
+}
+
+nav{
+  display:flex;
+  gap:24px;
+}
+
+nav a{
+  text-decoration:none;
+  color:var(--ink);
+  font-weight:700;
+}
+
+.btn{
+  display:inline-block;
+  background:var(--red);
+  color:#fff;
+  text-decoration:none;
+  padding:13px 22px;
+  border-radius:10px;
+  font-weight:900;
+}
+
+.hero{
+  background:var(--navy);
+}
+
+.hero img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  padding:22px 5%;
+  border-bottom:1px solid #eee;
+}
+
+.feature{
+  padding:16px;
+  border-radius:12px;
+  background:#f7f9fb;
+  text-align:center;
+}
+
+.feature b{
+  display:block;
+  margin-bottom:5px;
+}
+
+section{
+  padding:44px 6%;
+}
+
+h2{
+  text-align:center;
+  font-size:34px;
+  margin:0 0 28px;
+  color:var(--navy);
+}
+
+.product{
+  max-width:980px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:28px;
+  align-items:center;
+  background:#fff;
+  border:1px solid #e8edf2;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.photos{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.photos img{
+  width:100%;
+  border-radius:12px;
+}
+
+.tag{
+  display:inline-block;
+  background:#eef3f8;
+  padding:7px 11px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.product h3{
+  font-size:30px;
+  margin:10px 0;
+}
+
+.price{
+  font-size:40px;
+  font-weight:900;
+  color:var(--red);
+  margin:14px 0;
+}
+
+.paypal{
+  display:inline-block;
+  background:#ffc439;
+  color:#111;
+  text-decoration:none;
+  padding:15px 22px;
+  border-radius:10px;
+  font-weight:900;
+}
+
+.about{
+  background:var(--navy);
+  color:#fff;
+  text-align:center;
+}
+
+.about h2{
+  color:#fff;
+}
+
+.about p{
+  max-width:700px;
+  margin:auto;
+  line-height:1.6;
+  color:#dbe5ee;
+}
+
+footer{
+  background:#031322;
+  color:#fff;
+  text-align:center;
+  padding:22px;
+}
+
+@media(max-width:800px){
+  nav{display:none}
+
+  .brand{
+    font-size:18px;
+  }
+
+  .features{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .product{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:520px){
+  .features{
+    grid-template-columns:1fr;
+  }
+
+  .photos{
+    grid-template-columns:1fr 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-badge">OCG</div>
+    <div>OCG CUSTOM SLAB</div>
+  </div>
+
+  <nav>
+    <a href="#">Home</a>
+    <a href="#shop">Shop</a>
+    <a href="#about">About</a>
+  </nav>
+
+  <a class="btn" href="#shop">Shop Now</a>
+</header>
+
+<div class="hero">
+  <img src="ocg-homepage-banner-new.png" alt="OCG Custom Slab">
+</div>
+
+<div class="features">
+  <div class="feature">
+    <b>Secure Checkout</b>
+    <span>Pay safely with PayPal</span>
+  </div>
+
+  <div class="feature">
+    <b>Quality Custom Labels</b>
+    <span>Clean professional design</span>
+  </div>
+
+  <div class="feature">
+    <b>Careful Shipping</b>
+    <span>Protected and packed securely</span>
+  </div>
+
+  <div class="feature">
+    <b>Made for Collectors</b>
+    <span>Cards, coins and collectibles</span>
+  </div>
+</div>
+
+<section id="shop">
+  <h2>Featured Product</h2>
+
+  <div class="product">
+    <div class="photos">
+      <img src="alohi-gilman-front.jpg" alt="Alohi Gilman front">
+      <img src="alohi-gilman-back.jpg" alt="Alohi Gilman back">
+    </div>
+
+    <div>
+      <span class="tag">OCG CUSTOM SLAB</span>
+
+      <h3>Alohi Gilman OCG Custom Slab</h3>
+
+      <p>
+        2026 Topps<br>
+        2025 Greatest Hits<br>
+        #25GH-AG
+      </p>
+
+      <div class="price">$7.00</div>
+
+      <a
+        class="paypal"
+        href="https://www.paypal.com/ncp/payment/HJS423LK4R4NL"
+        target="_blank"
+        rel="noopener"
+      >
+        Buy Now with PayPal
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="about">
+  <h2>OCG Custom Slab</h2>
+
+  <p>
+    Premium custom presentation for trading cards,
+    coins and collectibles.
+  </p>
+</section>
+
+<footer>
+  © 2026 OCG Custom Slab
+</footer>
+
+</body>
+</html>
