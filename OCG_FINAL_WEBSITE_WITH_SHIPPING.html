@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OCG Custom Slab</title>
+<style>
+:root{--navy:#071b31;--gold:#d9a83d;--red:#e7192d;--ink:#0b1730;--soft:#f5f7fa}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:white}
+.topbar{background:var(--navy);color:white;padding:8px 4%;font-size:13px;display:flex;justify-content:space-between}
+header{background:#fff;padding:14px 4%;display:flex;align-items:center;gap:24px;justify-content:space-between;border-bottom:1px solid #e8edf2;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:12px;min-width:270px}
+.brand img{width:66px;height:66px;object-fit:contain}
+.brand-text b{display:block;font-size:24px;color:var(--navy)}
+.brand-text small{letter-spacing:2px;font-weight:700;color:#5d6a7b}
+.search{flex:1;display:flex;max-width:620px}
+.search input{flex:1;padding:14px;border:1px solid #cfd7e3;border-radius:9px 0 0 9px;font-size:15px}
+.search button{border:0;background:var(--navy);color:#fff;padding:0 20px;border-radius:0 9px 9px 0;font-size:20px}
+.account{display:flex;gap:18px;font-weight:700;font-size:13px}
+nav{background:var(--navy);display:flex;gap:0;overflow-x:auto;white-space:nowrap}
+nav a{color:#fff;text-decoration:none;padding:15px 18px;font-weight:700;font-size:14px}
+nav a:first-child{background:var(--gold);color:#111}
+nav a.deals{background:var(--red);margin-left:auto}
+.hero{background:linear-gradient(90deg,rgba(4,15,29,.98),rgba(4,15,29,.75)),url('ocg-homepage-banner.png') center/cover no-repeat;min-height:390px;display:flex;align-items:center}
+.hero-copy{padding:48px 5%;max-width:650px;color:#fff}
+.kicker{letter-spacing:4px;font-size:13px;font-weight:800}
+.hero h1{font-family:Georgia,serif;font-size:58px;line-height:.98;margin:12px 0}
+.hero h1 span{color:#f3c65f}
+.hero p{font-size:20px;line-height:1.45}
+.btn{display:inline-block;background:var(--red);color:#fff;text-decoration:none;padding:14px 26px;border-radius:8px;font-weight:900;margin-top:8px}
+.categories{padding:20px 2%;display:grid;grid-template-columns:repeat(7,1fr);gap:12px;background:#fff}
+.cat{background:linear-gradient(135deg,#0c2a48,#06192c);color:white;border-radius:12px;min-height:120px;padding:18px;display:flex;flex-direction:column;justify-content:flex-end}
+.cat h3{margin:0 0 8px;font-size:18px}
+.cat span{color:#f5c65b;font-weight:800;font-size:13px}
+.features{padding:18px 4%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;border-top:1px solid #e8edf2;border-bottom:1px solid #e8edf2}
+.feature{display:flex;gap:10px;align-items:center}
+.icon{width:42px;height:42px;border:2px solid var(--navy);border-radius:50%;display:grid;place-items:center;font-weight:900}
+.feature b{display:block}.feature small{color:#667085}
+section{padding:38px 4%}
+h2{font-size:30px;margin:0 0 20px;color:var(--navy)}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.product{border:1px solid #e6eaf0;border-radius:14px;padding:14px;background:#fff;box-shadow:0 5px 18px rgba(0,0,0,.05)}
+.product img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px;background:#f2f4f7}
+.product h3{font-size:17px;margin:12px 0 5px}
+.price{font-size:22px;font-weight:900;color:var(--red)}
+.paypal{display:inline-block;margin-top:10px;background:#ffc439;color:#111;text-decoration:none;padding:11px 16px;border-radius:8px;font-weight:900}
+.about{background:var(--navy);color:white;text-align:center}
+.about h2{color:white}.about p{max-width:760px;margin:auto;line-height:1.6;color:#d9e2ec}
+footer{background:#031322;color:#fff;padding:20px;text-align:center}
+@media(max-width:900px){
+  .search,.account,nav{display:none}
+  header{padding:10px 4%}
+  .brand img{width:50px;height:50px}
+  .brand-text b{font-size:19px}
+  .brand-text small{font-size:9px}
+  .hero{min-height:430px;background-position:center}
+  .hero h1{font-size:42px}
+  .hero p{font-size:17px}
+  .categories{grid-template-columns:repeat(2,1fr)}
+  .features{grid-template-columns:1fr 1fr}
+  .product-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+  .topbar{font-size:11px}
+  .categories,.features,.product-grid{grid-template-columns:1fr}
+  .hero h1{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>Welcome to OCG — Cards • Coins • Collectibles • Art • Ceramics • Food & More</span>
+  <span>About &nbsp; Contact &nbsp; Help</span>
+</div>
+
+<header>
+  <div class="brand">
+    <img src="ocg-logo.jpg" alt="OCG Logo">
+    <div class="brand-text">
+      <b>OCG CUSTOM SLAB</b>
+      <small>CARDS • COINS • COLLECTIBLES • MORE</small>
+    </div>
+  </div>
+
+  <div class="search">
+    <input placeholder="Search cards, coins, art, ceramics and more...">
+    <button>⌕</button>
+  </div>
+
+  <div class="account">
+    <span>My Account</span>
+    <span>Cart (0)</span>
+  </div>
+</header>
+
+<nav>
+  <a href="#">Home</a>
+  <a href="#cards">Trading Cards</a>
+  <a href="#coins">Coins</a>
+  <a href="#art">Art & Paintings</a>
+  <a href="#ceramics">Ceramics & Pottery</a>
+  <a href="#vintage">Vintage & Collectibles</a>
+  <a href="#home">Home & Lifestyle</a>
+  <a href="#food">Food & Beverages</a>
+  <a class="deals" href="#shop">Deals</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="kicker">OCG • UNIQUE ITEMS • GREAT FINDS</div>
+    <h1>Welcome to <span>OCG</span><br>Marketplace</h1>
+    <p>Trading cards, coins, art, ceramics, vintage items, home goods, food and more — all in one OCG store.</p>
+    <a class="btn" href="#shop">Shop Now →</a>
+  </div>
+</section>
+
+<div class="categories">
+  <div class="cat" id="cards"><h3>Trading Cards</h3><span>Shop Cards →</span></div>
+  <div class="cat" id="coins"><h3>Coins</h3><span>Shop Coins →</span></div>
+  <div class="cat" id="art"><h3>Art & Paintings</h3><span>Shop Art →</span></div>
+  <div class="cat" id="ceramics"><h3>Ceramics & Pottery</h3><span>Shop Ceramics →</span></div>
+  <div class="cat" id="vintage"><h3>Vintage & Collectibles</h3><span>Shop Vintage →</span></div>
+  <div class="cat" id="home"><h3>Home & Lifestyle</h3><span>Shop Home →</span></div>
+  <div class="cat" id="food"><h3>Food & Beverages</h3><span>Shop Food →</span></div>
+</div>
+
+<div class="features">
+  <div class="feature"><div class="icon">✓</div><div><b>Secure Checkout</b><small>Pay safely with PayPal</small></div></div>
+  <div class="feature"><div class="icon">◆</div><div><b>Quality Items</b><small>Carefully selected</small></div></div>
+  <div class="feature"><div class="icon">□</div><div><b>Careful Shipping</b><small>Protected and packed securely</small></div></div>
+  <div class="feature"><div class="icon">★</div><div><b>Great Deals</b><small>New items added regularly</small></div></div>
+</div>
+
+<section id="shop">
+  <h2>Featured Items</h2>
+  <div class="product-grid">
+    <div class="product">
+      <img src="alohi-gilman-front.jpg" alt="OCG custom slab">
+      <h3>Alohi Gilman OCG Custom Slab</h3>
+      <div class="price">$7.00</div>
+      <p style="margin:6px 0 2px;font-weight:700;color:#344054">Shipping: $4.99</p>
+      <p style="margin:0 0 8px;font-size:13px;color:#667085">Total: $11.99</p>
+      <a class="paypal" href="https://www.paypal.com/ncp/payment/HJS423LK4R4NL" target="_blank" rel="noopener">Buy with PayPal</a>
+    </div>
+    <div class="product"><div style="aspect-ratio:1/1;background:#f2f4f7;border-radius:10px;display:grid;place-items:center;font-size:60px">🪙</div><h3>Coins</h3><p>Add your coin listings here.</p></div>
+    <div class="product"><div style="aspect-ratio:1/1;background:#f2f4f7;border-radius:10px;display:grid;place-items:center;font-size:60px">🖼️</div><h3>Art & Paintings</h3><p>Add paintings and artwork here.</p></div>
+    <div class="product"><div style="aspect-ratio:1/1;background:#f2f4f7;border-radius:10px;display:grid;place-items:center;font-size:60px">🏺</div><h3>Ceramics & Pottery</h3><p>Add plates, vases and pottery here.</p></div>
+  </div>
+</section>
+
+
+<section id="shipping" style="padding-top:10px">
+  <h2>Shipping</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <div class="product">
+      <h3>Cards & Small Items</h3>
+      <div class="price">$4.99</div>
+      <p>Standard shipping for trading cards and other lightweight items.</p>
+    </div>
+    <div class="product">
+      <h3>Coins & Medium Items</h3>
+      <div class="price">$6.99</div>
+      <p>For coins and medium-size collectibles that need extra protection.</p>
+    </div>
+    <div class="product">
+      <h3>Ceramics & Heavy Items</h3>
+      <div class="price">$9.99+</div>
+      <p>Final shipping depends on size, weight and protective packing.</p>
+    </div>
+  </div>
+  <p style="margin-top:16px;color:#667085;font-size:14px">
+    Shipping is shown separately from the item price so buyers can clearly see the full cost before payment.
+  </p>
+</section>
+
+<section class="about" id="about">
+  <h2>OCG Marketplace</h2>
+  <p>Cards, coins, collectibles, art, ceramics, vintage finds, home goods, food and more. New items can be added anytime as your store grows.</p>
+</section>
+
+<footer>© 2026 OCG Custom Slab • OCG Marketplace</footer>
+</body>
+</html>
