@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OCG Marketplace</title>
+<style>
+:root{
+  --navy:#071b31;
+  --navy2:#0c2f50;
+  --gold:#e1b454;
+  --red:#e51d2a;
+  --ink:#0b1730;
+  --muted:#667085;
+  --soft:#f5f7fa;
+  --line:#e7ebf0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff}
+.topbar{background:var(--navy);color:#fff;padding:8px 5%;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:24px;padding:12px 5%;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.brand{display:flex;align-items:center;gap:12px;min-width:250px}
+.brand img{width:58px;height:58px;object-fit:contain}
+.brand b{display:block;font-size:22px;color:var(--navy)}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px;font-weight:700}
+.search{flex:1;display:flex;max-width:650px}
+.search input{width:100%;padding:13px 14px;border:1px solid #cfd7e3;border-radius:9px 0 0 9px;font-size:15px;outline:none}
+.search button{border:0;background:var(--navy);color:#fff;padding:0 20px;border-radius:0 9px 9px 0;font-size:18px}
+.cart{font-size:13px;font-weight:700;white-space:nowrap}
+nav{background:var(--navy);display:flex;overflow-x:auto;white-space:nowrap}
+nav button{border:0;background:transparent;color:#fff;padding:14px 17px;font-weight:700;cursor:pointer}
+nav button.active{background:var(--gold);color:#111}
+.hero{min-height:380px;background:
+linear-gradient(90deg,rgba(5,17,32,.97),rgba(5,17,32,.62)),
+url('ocg-homepage-banner.png') center/cover no-repeat;
+display:flex;align-items:center}
+.hero-copy{padding:48px 6%;max-width:690px;color:white}
+.hero .kicker{letter-spacing:4px;font-size:12px;font-weight:800;color:#dbe5ef}
+.hero h1{font-family:Georgia,serif;font-size:58px;line-height:1;margin:12px 0}
+.hero h1 span{color:#f0c664}
+.hero p{font-size:19px;line-height:1.5;color:#e4ebf2}
+.btn{display:inline-block;background:var(--red);color:#fff;text-decoration:none;padding:13px 24px;border-radius:8px;font-weight:900}
+.trust{padding:18px 5%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;border-bottom:1px solid var(--line)}
+.trust>div{background:var(--soft);border-radius:12px;padding:14px;text-align:center}
+.trust b{display:block;margin-bottom:4px}
+.trust small{color:var(--muted)}
+main{padding:34px 5%}
+.toolbar{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:20px}
+.toolbar h2{font-size:30px;margin:0;color:var(--navy)}
+.toolbar p{margin:5px 0 0;color:var(--muted)}
+.count{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 5px 18px rgba(0,0,0,.05);display:flex;flex-direction:column}
+.image-wrap{aspect-ratio:1/1;background:#f2f4f7;position:relative;overflow:hidden}
+.image-wrap img{width:100%;height:100%;object-fit:cover}
+.badge{position:absolute;top:10px;left:10px;background:var(--navy);color:white;padding:6px 9px;border-radius:16px;font-size:11px;font-weight:800}
+.card-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.category{font-size:11px;font-weight:900;color:var(--red);letter-spacing:.5px;text-transform:uppercase}
+.card h3{font-size:17px;line-height:1.3;margin:0}
+.subtitle{font-size:13px;color:var(--muted);min-height:34px}
+.price-row{display:flex;justify-content:space-between;gap:10px;align-items:end;margin-top:auto}
+.price{font-size:23px;font-weight:900;color:var(--navy)}
+.shipping{font-size:12px;color:var(--muted);text-align:right}
+.total{font-size:12px;font-weight:800;color:#344054}
+.paypal{display:block;text-align:center;margin-top:6px;background:#ffc439;color:#111;text-decoration:none;padding:11px 12px;border-radius:8px;font-weight:900}
+.paypal.disabled{background:#e5e7eb;color:#6b7280;pointer-events:none}
+.empty{grid-column:1/-1;padding:50px;text-align:center;background:var(--soft);border-radius:14px;color:var(--muted)}
+.shipping-policy{margin-top:36px;background:var(--navy);color:#fff;border-radius:16px;padding:26px}
+.shipping-policy h2{margin-top:0}
+.shipping-rates{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.shipping-rate{background:rgba(255,255,255,.08);padding:16px;border-radius:12px}
+.shipping-rate b{display:block;font-size:18px}
+.shipping-rate span{color:#d9e2ec;font-size:13px}
+footer{background:#031322;color:white;text-align:center;padding:22px;margin-top:40px}
+@media(max-width:950px){
+  .search,.cart,nav{display:none}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .trust{grid-template-columns:1fr 1fr}
+  .shipping-rates{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .topbar{font-size:10px}
+  .brand img{width:48px;height:48px}
+  .brand b{font-size:18px}
+  .hero{min-height:390px}
+  .hero h1{font-size:39px}
+  .hero p{font-size:16px}
+  .grid,.trust{grid-template-columns:1fr}
+  main{padding:28px 4%}
+  .toolbar{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>OCG Marketplace — Cards • Coins • Art • Ceramics • Vintage • Home • Food & More</span>
+  <span>Secure PayPal Checkout</span>
+</div>
+
+<header>
+  <div class="brand">
+    <img src="ocg-logo.jpg" alt="OCG Logo">
+    <div>
+      <b>OCG MARKETPLACE</b>
+      <small>UNIQUE ITEMS • GREAT FINDS</small>
+    </div>
+  </div>
+  <div class="search">
+    <input id="searchInput" type="search" placeholder="Search all products...">
+    <button aria-label="Search">⌕</button>
+  </div>
+  <div class="cart">Cards • Coins • Collectibles • More</div>
+</header>
+
+<nav id="categoryNav"></nav>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="kicker">OCG • UNIQUE ITEMS • GREAT FINDS</div>
+    <h1>One Store.<br><span>Many Categories.</span></h1>
+    <p>Shop trading cards, coins, art, ceramics, vintage items, home goods, food and more.</p>
+    <a class="btn" href="#products">Shop All Items →</a>
+  </div>
+</section>
+
+<section class="trust">
+  <div><b>Secure Checkout</b><small>Pay safely with PayPal</small></div>
+  <div><b>Clear Shipping</b><small>Shipping shown separately</small></div>
+  <div><b>Careful Packing</b><small>Protected for delivery</small></div>
+  <div><b>New Items</b><small>Easy to add anytime</small></div>
+</section>
+
+<main id="products">
+  <div class="toolbar">
+    <div>
+      <h2 id="sectionTitle">All Products</h2>
+      <p>Browse everything currently listed in the OCG store.</p>
+    </div>
+    <div class="count" id="productCount"></div>
+  </div>
+
+  <div class="grid" id="productGrid"></div>
+
+  <section class="shipping-policy">
+    <h2>Shipping Guide</h2>
+    <div class="shipping-rates">
+      <div class="shipping-rate"><b>Cards & Small Items</b><span>Usually from $4.99</span></div>
+      <div class="shipping-rate"><b>Coins & Medium Items</b><span>Usually from $6.99</span></div>
+      <div class="shipping-rate"><b>Ceramics & Heavy Items</b><span>From $9.99+ depending on size and weight</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 OCG Marketplace • ocgcustomslab.com</footer>
+
+<script src="products.js"></script>
+<script>
+const products = Array.isArray(window.OCG_PRODUCTS) ? window.OCG_PRODUCTS : [];
+const categories = ["All","Trading Cards","Coins","Art & Paintings","Ceramics & Pottery","Vintage & Collectibles","Home & Lifestyle","Food & Beverages","Other"];
+let activeCategory = "All";
+let searchText = "";
+
+const nav = document.getElementById("categoryNav");
+const grid = document.getElementById("productGrid");
+const count = document.getElementById("productCount");
+const title = document.getElementById("sectionTitle");
+const search = document.getElementById("searchInput");
+
+function money(n){ return "$" + Number(n || 0).toFixed(2); }
+
+function renderNav(){
+  nav.innerHTML = categories.map(c =>
+    `<button class="${c===activeCategory?'active':''}" data-cat="${c}">${c}</button>`
+  ).join("");
+  nav.querySelectorAll("button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      activeCategory = btn.dataset.cat;
+      renderNav();
+      renderProducts();
+      document.getElementById("products").scrollIntoView({behavior:"smooth"});
+    });
+  });
+}
+
+function renderProducts(){
+  const q = searchText.trim().toLowerCase();
+  const filtered = products.filter(p=>{
+    const catOk = activeCategory==="All" || p.category===activeCategory;
+    const hay = `${p.title||""} ${p.subtitle||""} ${p.category||""}`.toLowerCase();
+    return catOk && (!q || hay.includes(q));
+  });
+
+  title.textContent = activeCategory==="All" ? "All Products" : activeCategory;
+  count.textContent = `${filtered.length} item${filtered.length===1?"":"s"}`;
+
+  if(!filtered.length){
+    grid.innerHTML = `<div class="empty">No items in this category yet.</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p=>{
+    const total = Number(p.price||0) + Number(p.shipping||0);
+    const pay = p.paypal
+      ? `<a class="paypal" href="${p.paypal}" target="_blank" rel="noopener">Buy with PayPal</a>`
+      : `<a class="paypal disabled" href="#">Payment Link Coming Soon</a>`;
+    return `
+      <article class="card">
+        <div class="image-wrap">
+          <img src="${p.image}" alt="${p.title}">
+          <span class="badge">${p.status || "For Sale"}</span>
+        </div>
+        <div class="card-body">
+          <div class="category">${p.category}</div>
+          <h3>${p.title}</h3>
+          <div class="subtitle">${p.subtitle || ""}</div>
+          <div class="price-row">
+            <div>
+              <div class="price">${money(p.price)}</div>
+              <div class="total">Total: ${money(total)}</div>
+            </div>
+            <div class="shipping">Shipping<br><b>${money(p.shipping)}</b></div>
+          </div>
+          ${pay}
+        </div>
+      </article>`;
+  }).join("");
+}
+
+search.addEventListener("input",e=>{
+  searchText=e.target.value;
+  renderProducts();
+});
+
+renderNav();
+renderProducts();
+</script>
+</body>
+</html>
