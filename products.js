@@ -21,6 +21,17 @@ window.OCG_PRODUCTS = [
     shipping: 1.36,
   paypal: "https://www.paypal.com/ncp/payment/BH3J45N5CTK6N",
     status: "For Sale"
+  },
+  {
+    id: "royal-myanmar-teamix",
+    category: "Food & Beverages",
+    title: "Royal Myanmar Teamix Solid Milk Tea 30 x 20g",
+    subtitle: "30 sachets x 20g • Price per pack",
+    image: "royal-myanmar-teamix.jpg",
+    price: 8.50,
+    shipping: 4.99,
+    paypal: "https://www.paypal.com/ncp/payment/4DTHKNB5AN6R4",
+    status: "For Sale"
   }
 ];
 
