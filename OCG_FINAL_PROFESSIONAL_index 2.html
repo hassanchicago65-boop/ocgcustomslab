@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="OCG Marketplace — trading cards, coins, art, ceramics, vintage collectibles, home & lifestyle, food and more.">
+<title>OCG Marketplace</title>
+<style>
+:root{
+  --navy:#061b33;--navy2:#0a2d50;--gold:#d7aa4f;--gold2:#f3d17d;
+  --red:#d9262f;--ink:#142033;--muted:#667085;--line:#e7eaf0;
+  --soft:#f6f8fb;--white:#fff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff}
+a{text-decoration:none;color:inherit}
+.topbar{background:var(--navy);color:#fff;padding:8px 4%;font-size:12px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+header{background:#fff;display:flex;align-items:center;gap:24px;padding:12px 4%;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:12px;min-width:270px}
+.brand img{width:62px;height:62px;object-fit:contain}
+.brand-text b{display:block;font-family:Georgia,serif;font-size:24px;color:var(--navy)}
+.brand-text small{display:block;letter-spacing:2px;color:var(--muted);font-weight:700;font-size:9px}
+.search{flex:1;display:flex;max-width:720px}
+.search input{width:100%;border:1px solid #ccd4df;border-radius:8px 0 0 8px;padding:13px 14px;font-size:15px;outline:none}
+.search button{border:0;background:var(--navy);color:white;padding:0 20px;border-radius:0 8px 8px 0;font-size:19px}
+.header-links{display:flex;gap:18px;font-size:13px;font-weight:800}
+.catnav{background:var(--navy);display:flex;overflow-x:auto;white-space:nowrap;position:sticky;top:87px;z-index:29}
+.catnav a{color:#fff;padding:14px 18px;font-weight:800;font-size:13px}
+.catnav a:hover,.catnav a.active{background:var(--gold);color:#111}
+.hero{min-height:420px;display:flex;align-items:center;background:
+linear-gradient(90deg,rgba(3,14,28,.98) 0%,rgba(3,14,28,.75) 45%,rgba(3,14,28,.28) 100%),
+url('ocg-homepage-banner.png') center/cover no-repeat}
+.hero-inner{padding:52px 5%;max-width:760px;color:#fff}
+.hero h1{font-family:Georgia,serif;font-size:58px;line-height:1.02;margin:0 0 14px}
+.hero h1 span{color:var(--gold2)}
+.hero p{font-size:19px;line-height:1.55;color:#e9eef5;max-width:670px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-block;padding:13px 22px;border-radius:8px;font-weight:900}
+.btn-gold{background:var(--gold2);color:#161616}
+.btn-white{background:#fff;color:var(--navy)}
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#dfe4eb;border-bottom:1px solid var(--line)}
+.trust div{background:#fff;padding:18px;text-align:center}
+.trust b{display:block;color:var(--navy);margin-bottom:5px}
+.trust small{color:var(--muted)}
+main{padding:32px 4%}
+.section-title{font-size:31px;color:var(--navy);margin:0 0 6px}
+.section-sub{margin:0 0 20px;color:var(--muted)}
+.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:42px}
+.category-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+.category-art{height:130px;display:flex;align-items:center;justify-content:center;font-size:56px;background:linear-gradient(135deg,#f7f1e4,#eceff4)}
+.category-body{padding:14px}
+.category-body b{display:block;font-size:17px;color:var(--navy);margin-bottom:4px}
+.category-body span{font-size:12px;color:var(--muted)}
+.category-section{margin-bottom:46px;scroll-margin-top:150px}
+.section-head{display:flex;align-items:end;justify-content:space-between;border-bottom:2px solid var(--line);padding-bottom:9px;margin-bottom:18px}
+.section-head h2{margin:0;color:var(--navy);font-size:28px}
+.section-head span{font-size:12px;color:var(--muted)}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.product{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 5px 18px rgba(0,0,0,.05);display:flex;flex-direction:column}
+.product-image{aspect-ratio:1/1;background:#f4f6f8;position:relative;overflow:hidden}
+.product-image img{width:100%;height:100%;object-fit:cover}
+.badge{position:absolute;top:10px;left:10px;background:var(--navy);color:#fff;border-radius:16px;padding:6px 9px;font-size:11px;font-weight:900}
+.product-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.kicker{color:var(--red);font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.product h3{margin:0;font-size:17px;line-height:1.3}
+.subtitle{font-size:13px;color:var(--muted);min-height:34px}
+.price-row{display:flex;justify-content:space-between;gap:10px;align-items:end;margin-top:auto}
+.price{font-size:24px;font-weight:900;color:var(--navy)}
+.ship{font-size:12px;color:var(--muted);text-align:right}
+.tax-note{font-size:11px;color:#6b7280}
+.paypal{display:block;text-align:center;background:#ffc439;padding:11px;border-radius:8px;font-weight:900;margin-top:5px}
+.paypal.disabled{background:#e6e8ec;color:#737983;pointer-events:none}
+.empty{background:var(--soft);border:1px dashed #cfd6df;border-radius:12px;padding:20px;color:var(--muted)}
+.policy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:22px}
+.policy{border-radius:16px;padding:24px;background:var(--navy);color:#fff}
+.policy.light{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.policy h2{margin-top:0}
+.policy p,.policy li{line-height:1.6;color:#e4eaf2}
+.policy.light p,.policy.light li{color:#475467}
+.policy ul{padding-left:18px;margin-bottom:0}
+.tax-box{background:#fff8e7;border:1px solid #ecd596;border-radius:14px;padding:18px;margin:24px 0}
+.tax-box b{color:#614b19}
+.footer{background:#031322;color:#fff;margin-top:40px}
+.footer-inner{padding:30px 4%;display:grid;grid-template-columns:2fr 1fr 1fr;gap:28px}
+.footer h3,.footer h4{margin-top:0}
+.footer p,.footer a{font-size:13px;color:#cbd5e1;line-height:1.6}
+.footer a{display:block;margin:5px 0}
+.footer-bottom{text-align:center;border-top:1px solid rgba(255,255,255,.12);padding:14px;font-size:12px;color:#aebbc9}
+@media(max-width:1000px){
+  .search,.header-links{display:none}
+  .catnav{top:74px}
+  .category-grid,.product-grid{grid-template-columns:repeat(2,1fr)}
+  .trust{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .topbar{font-size:10px}
+  header{padding:9px 4%}
+  .brand{min-width:auto}
+  .brand img{width:48px;height:48px}
+  .brand-text b{font-size:18px}
+  .catnav{top:66px}
+  .catnav a{font-size:12px;padding:12px 14px}
+  .hero{min-height:360px}
+  .hero h1{font-size:41px}
+  .hero p{font-size:16px}
+  .category-grid,.product-grid,.trust,.policy-grid,.footer-inner{grid-template-columns:1fr}
+  .section-head{align-items:flex-start;flex-direction:column;gap:4px}
+  main{padding:26px 4%}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span>Welcome to OCG — Trading Cards • Coins • Collectibles • Art • Ceramics • Food & More</span>
+  <span>Secure PayPal Checkout • USPS / UPS Shipping</span>
+</div>
+
+<header>
+  <a class="brand" href="#top">
+    <img src="ocg-logo.jpg" alt="OCG logo">
+    <div class="brand-text">
+      <b>OCG MARKETPLACE</b>
+      <small>SLABS • COLLECTIBLES • MORE</small>
+    </div>
+  </a>
+  <div class="search">
+    <input id="searchInput" type="search" placeholder="Search trading cards, coins, art, ceramics, food, and more...">
+    <button aria-label="Search">⌕</button>
+  </div>
+  <div class="header-links">
+    <a href="#about">About</a>
+    <a href="#shipping">Shipping</a>
+    <a href="#returns">Returns</a>
+  </div>
+</header>
+
+<nav class="catnav" id="catnav"></nav>
+
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <h1>Welcome to <span>OCG</span><br>Marketplace</h1>
+    <p>Trading Cards, Coins, Art, Ceramics, Vintage Collectibles, Home & Lifestyle, Food & Beverages and more — organized clearly by category.</p>
+    <div class="hero-actions">
+      <a class="btn btn-gold" href="#catalog">Shop Now →</a>
+      <a class="btn btn-white" href="#about">About OCG</a>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div><b>Fast & Safe Shipping</b><small>Carefully packed for delivery</small></div>
+  <div><b>Quality Items</b><small>Clear photos and descriptions</small></div>
+  <div><b>Secure Checkout</b><small>Pay securely with PayPal</small></div>
+  <div><b>Customer Support</b><small>Friendly order support</small></div>
+</section>
+
+<main>
+  <section>
+    <h2 class="section-title">Shop by Category</h2>
+    <p class="section-sub">Every product is placed in its correct category so customers can find items quickly.</p>
+    <div class="category-grid" id="categoryGrid"></div>
+  </section>
+
+  <section id="catalog"></section>
+
+  <div class="tax-box">
+    <b>Sales tax:</b> General merchandise sold from the registered Chicago location is configured at <strong>10.5%</strong> where applicable. Food and beverage items may use different tax rates and are handled separately based on product type.
+  </div>
+
+  <section class="policy-grid">
+    <article class="policy" id="about">
+      <h2>About OCG Marketplace</h2>
+      <p>OCG Marketplace is an independent online store offering trading cards, coins, custom slabs, art, ceramics, vintage collectibles, home goods, food items and other unique merchandise.</p>
+      <p>We focus on clear listings, fair pricing, secure payments and careful packing.</p>
+    </article>
+
+    <article class="policy" id="shipping">
+      <h2>Shipping Policy</h2>
+      <ul>
+        <li>Orders may ship with USPS or UPS depending on package size, weight and destination.</li>
+        <li>Shipping charges are shown separately on the product or during checkout.</li>
+        <li>Most orders are prepared within 1–3 business days.</li>
+        <li>Tracking is provided when the selected shipping service includes tracking.</li>
+        <li>Large, fragile or heavy items may have higher shipping charges.</li>
+        <li>Please make sure your shipping address is correct before paying.</li>
+      </ul>
+    </article>
+
+    <article class="policy" id="returns">
+      <h2>Return & Refund Policy</h2>
+      <p><strong>All sales are final. We do not accept returns or exchanges for buyer’s remorse, change of mind, or ordering the wrong item.</strong></p>
+      <p>If an item arrives damaged, incorrect, or significantly different from the listing description, please contact OCG as soon as possible after delivery. We will review the issue and, when appropriate, provide a replacement, partial refund, or full refund.</p>
+      <p>Please keep the original item, shipping box and packing materials. Clear photos of the item and packaging may be required before a claim can be reviewed.</p>
+      <p>Any approved refund will be sent back through the original payment method. Shipping charges are non-refundable unless the problem was caused by OCG or the carrier and OCG approves the refund.</p>
+    </article>
+
+    <article class="policy light" id="payments">
+      <h2>Payment & Order Policy</h2>
+      <ul>
+        <li>Payments are processed through PayPal on supported listings.</li>
+        <li>Applicable sales tax is added at checkout where required.</li>
+        <li>Orders are not considered confirmed until payment is successfully completed.</li>
+        <li>OCG may cancel and refund an order if an item becomes unavailable or a listing contains a material pricing or inventory error.</li>
+      </ul>
+    </article>
+
+    <article class="policy light" id="privacy">
+      <h2>Privacy Policy</h2>
+      <p>OCG Marketplace does not sell customer personal information. Information provided for an order is used only to process payment, fulfill shipping, communicate about the order, prevent fraud and provide customer support.</p>
+      <p>Payment information is handled by the payment provider used at checkout. OCG does not directly store full payment-card details on this website.</p>
+    </article>
+
+    <article class="policy light" id="terms">
+      <h2>Terms & Collectibles Disclaimer</h2>
+      <p>Product photos and descriptions are provided to represent each item as accurately as possible. Colors and appearance may vary slightly due to lighting, photography and display settings.</p>
+      <p>OCG is an independent marketplace and custom slab brand. Unless a listing specifically states otherwise, an OCG custom slab is not a third-party certification or grade from PSA, SGC, BGS or another independent grading company.</p>
+      <p>Customers are responsible for reviewing the complete listing before purchase.</p>
+    </article>
+
+    <article class="policy light" id="food">
+      <h2>Food & Beverage Policy</h2>
+      <p>Food and beverage products may be subject to different tax rates and additional state or local rules. Tax treatment depends on the exact product type. Regulated, restricted, perishable, homemade or age-restricted items may not be offered unless all applicable requirements are met.</p>
+    </article>
+
+    <article class="policy light" id="contact">
+      <h2>Contact & Support</h2>
+      <p>For order questions, shipping issues, damaged-item claims or product questions, use the contact method provided with your order confirmation or the official OCG Marketplace contact channel.</p>
+      <p>Please include your order information and a short description of the issue so we can help quickly.</p>
+    </article>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <h3>OCG Marketplace</h3>
+      <p>Trading cards, coins, collectibles and more — organized by category with secure PayPal checkout.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <a href="#trading-cards">Trading Cards</a>
+      <a href="#coins">Coins</a>
+      <a href="#vintage-and-collectibles">Vintage & Collectibles</a>
+      <a href="#food-and-beverages">Food & Beverages</a>
+    </div>
+    <div>
+      <h4>Information</h4>
+      <a href="#shipping">Shipping</a>
+      <a href="#returns">Returns</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#terms">Terms</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 OCG Marketplace • ocgcustomslab.com</div>
+</footer>
+
+<script src="products.js"></script>
+<script>
+const products = Array.isArray(window.OCG_PRODUCTS) ? window.OCG_PRODUCTS : [];
+
+const categories = [
+  ["Trading Cards","🃏","Cards, slabs and trading-card collectibles"],
+  ["Coins","🪙","Coins and numismatic collectibles"],
+  ["Art & Paintings","🖼️","Artwork, paintings and decorative pieces"],
+  ["Ceramics & Pottery","🏺","Ceramics, pottery and fragile collectibles"],
+  ["Vintage & Collectibles","📷","Vintage finds and collectible items"],
+  ["Home & Lifestyle","🏠","Home, decor and lifestyle items"],
+  ["Food & Beverages","🍯","Eligible packaged food and beverage items"],
+  ["Other","✨","Other unique marketplace items"]
+];
+
+function slug(s){
+  return s.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+}
+function money(v){ return "$" + Number(v||0).toFixed(2); }
+
+function productCard(p){
+  const generalTax = p.category === "Food & Beverages" ? "Food tax handled separately" : "10.5% tax where applicable";
+  const pay = p.paypal
+    ? `<a class="paypal" href="${p.paypal}" target="_blank" rel="noopener">Buy with PayPal</a>`
+    : `<a class="paypal disabled">Payment Link Coming Soon</a>`;
+  return `
+  <article class="product">
+    <div class="product-image">
+      <img src="${p.image}" alt="${p.title}">
+      <span class="badge">${p.status || "For Sale"}</span>
+    </div>
+    <div class="product-body">
+      <div class="kicker">${p.category}</div>
+      <h3>${p.title}</h3>
+      <div class="subtitle">${p.subtitle || ""}</div>
+      <div class="price-row">
+        <div>
+          <div class="price">${money(p.price)}</div>
+          <div class="tax-note">${generalTax}</div>
+        </div>
+        <div class="ship">Shipping<br><b>${money(p.shipping)}</b></div>
+      </div>
+      ${pay}
+    </div>
+  </article>`;
+}
+
+function renderNav(){
+  document.getElementById("catnav").innerHTML =
+    `<a href="#top" class="active">Home</a>` +
+    categories.map(c=>`<a href="#${slug(c[0])}">${c[0]}</a>`).join("");
+  document.getElementById("categoryGrid").innerHTML =
+    categories.map(c=>`
+      <a class="category-card" href="#${slug(c[0])}">
+        <div class="category-art">${c[1]}</div>
+        <div class="category-body"><b>${c[0]}</b><span>${c[2]}</span></div>
+      </a>`).join("");
+}
+
+function renderCatalog(query=""){
+  const q=query.trim().toLowerCase();
+  document.getElementById("catalog").innerHTML = categories.map(c=>{
+    const cat=c[0];
+    const items=products.filter(p=>{
+      if(p.category!==cat) return false;
+      if(!q) return true;
+      return (`${p.title||""} ${p.subtitle||""} ${p.category||""}`).toLowerCase().includes(q);
+    });
+    return `
+      <section class="category-section" id="${slug(cat)}">
+        <div class="section-head">
+          <h2>${cat}</h2><span>${items.length} item${items.length===1?"":"s"}</span>
+        </div>
+        ${items.length ? `<div class="product-grid">${items.map(productCard).join("")}</div>` :
+        `<div class="empty">${q ? "No matching products in this category." : "No products listed in this category yet."}</div>`}
+      </section>`;
+  }).join("");
+}
+
+document.getElementById("searchInput").addEventListener("input", e=>renderCatalog(e.target.value));
+renderNav();
+renderCatalog();
+</script>
+</body>
+</html>
