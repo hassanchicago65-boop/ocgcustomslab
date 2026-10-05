@@ -19,8 +19,8 @@ window.OCG_PRODUCTS = [
     image: "austria-1974-10-schilling.jpg",
     price: 3.50,
     shipping: 1.36,
-    paypal: "",
-    status: "Sample"
+  paypal: "https://www.paypal.com/ncp/payment/BH3J45N5CTK6N",
+    status: "For Sale"
   }
 ];
 
