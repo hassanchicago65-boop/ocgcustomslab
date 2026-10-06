@@ -28,7 +28,7 @@ window.OCG_PRODUCTS = [
     title: "Royal Myanmar Teamix Solid Milk Tea 30 x 20g",
     subtitle: "30 sachets x 20g • Price per pack",
     image: "royal-myanmar-teamix.jpg",
-    price: 8.50,
+    price: 9.50,
     shipping: 4.99,
     paypal: "https://www.paypal.com/ncp/payment/4DTHKNB5AN6R4",
     status: "For Sale"
