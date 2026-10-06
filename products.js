@@ -1,16 +1,28 @@
 window.OCG_PRODUCTS = [
   {
-    id: "alohi-gilman-slab",
-    category: "Trading Cards",
-    title: "Alohi Gilman OCG Custom Slab",
-    subtitle: "2026 Topps • 2025 Greatest Hits • #25GH-AG",
-    image: "alohi-gilman-front.jpg",
-    image2: "alohi-gilman-back.jpg",
-    price: 7.00,
-    shipping: 4.99,
-    paypal: "https://www.paypal.com/ncp/payment/HJS423LK4R4NL",
-    status: "For Sale"
-  },
+  id: "alohi-gilman-slab",
+  category: "Trading Cards",
+  title: "Alohi Gilman OCG Custom Slab",
+  subtitle: "2026 Topps • 2025 Greatest Hits • #25GH-AG",
+  image: "alohi-gilman-front.jpg",
+  image2: "alohi-gilman-back.jpg",
+  price: 7.00,
+  shipping: 4.99,
+  paypal: "https://www.paypal.com/ncp/payment/HJS423LK4R4NL",
+  paypalCartId: "VZSULZ8ZBVYLW",
+  status: "For Sale"
+},
+    
+    
+    
+    
+  
+
+    
+    
+      
+    
+  
   {
     id: "austria-1974-10-schilling",
     category: "Coins",
@@ -20,6 +32,7 @@ window.OCG_PRODUCTS = [
     price: 3.50,
     shipping: 1.36,
   paypal: "https://www.paypal.com/ncp/payment/BH3J45N5CTK6N",
+    paypalCartId: "RAHMDZF2PPXPL",
     status: "For Sale"
   },
   {
@@ -31,7 +44,9 @@ window.OCG_PRODUCTS = [
     price: 9.50,
     shipping: 4.99,
     paypal: "https://www.paypal.com/ncp/payment/4DTHKNB5AN6R4",
-    status: "For Sale"
+paypalCartId: "UAFS7A2YEZ2RN",
+status: "For Sale"
+    
   }
 ];
 
@@ -49,8 +64,19 @@ Copy this block and change the values:
   price: 25.00,
   shipping: 6.99,
   paypal: "YOUR_PAYPAL_LINK",
+  paypalCartId: "YOUR_PAYPAL_CART_ID",
   status: "For Sale"
 }
+  
+  
+  
+  
+  
+
+  
+  
+
+
 
 Supported categories:
 Trading Cards
