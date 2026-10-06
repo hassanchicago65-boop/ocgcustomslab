@@ -287,11 +287,17 @@ function money(v){ return "$" + Number(v||0).toFixed(2); }
 
 function productCard(p){
   const generalTax = p.category === "Food & Beverages" ? "Food tax handled separately" : "10.5% tax where applicable";
-  const pay = p.id === "royal-myanmar-teamix"
+ const pay = p.id === "royal-myanmar-teamix"
   ? `<paypal-add-to-cart-button data-id="UAFS7A2YEZ2RN"></paypal-add-to-cart-button>`
+  : p.id === "alohi-gilman-slab"
+  ? `<paypal-add-to-cart-button data-id="VZSULZ8ZBVYLW"></paypal-add-to-cart-button>`
   : p.paypal
   ? `<a class="paypal" href="${p.paypal}" target="_blank" rel="noopener">Buy with PayPal</a>`
-  : `<a class="paypal disabled">Payment Link Coming Soon</a>`;
+  : `<a class="paypal disabled">Payment Link Coming Soon</a>`; 
+  
+  
+  
+  
     
     
   return `
@@ -352,6 +358,7 @@ document.getElementById("searchInput").addEventListener("input", e=>renderCatalo
 renderNav();
 renderCatalog();
     cartPaypal.AddToCart({ id: "UAFS7A2YEZ2RN" });
+    cartPaypal.AddToCart({ id: "VZSULZ8ZBVYLW" });
 </script>
 </body>
 </html>
