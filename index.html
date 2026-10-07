@@ -65,12 +65,40 @@ main{padding:32px 4%}
   position:relative;
 }
 
-.product-image img{
+.product-main{
   width:100%;
-  height:auto;
-  display:block;
+  aspect-ratio:1/1;
   object-fit:contain;
+  display:block;
+  background:#fff;
 }
+
+.product-thumbs{
+  display:flex;
+  gap:8px;
+  padding:10px;
+  background:#fff;
+  border-top:1px solid #e5e7eb;
+}
+
+.product-thumbs img{
+  width:72px;
+  height:72px;
+  object-fit:cover;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  cursor:pointer;
+}
+  
+  
+
+
+
+  
+
+  
+  
+
 
 .badge{position:absolute;top:10px;left:10px;background:var(--navy);color:#fff;border-radius:16px;padding:6px 9px;font-size:11px;font-weight:900}
 .product-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
@@ -340,10 +368,24 @@ const pay = p.paypalCartId
   return `
   <article class="product">
     <div class="product-image">
-      <img src="${p.image}" alt="${p.title}">
-${p.image2 ? `<img src="${p.image2}" alt="${p.title} second image">` : ""}
-      <span class="badge">${p.status || "For Sale"}</span>
+  <img class="product-main" src="${p.image}" alt="${p.title}">
+
+  ${p.image2 ? `
+    <div class="product-thumbs">
+      <img src="${p.image}" alt="${p.title}"
+        onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+
+      <img src="${p.image2}" alt="${p.title} second image"
+        onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
     </div>
+  ` : ""}
+
+  <span class="badge">${p.status || "For Sale"}</span>
+</div>
+      
+
+      
+    
     <div class="product-body">
   <div class="kicker">${p.category}</div>
 
