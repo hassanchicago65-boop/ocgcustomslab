@@ -47,7 +47,18 @@ window.OCG_PRODUCTS = [
 paypalCartId: "UAFS7A2YEZ2RN",
 status: "For Sale"
     
-  }
+  },{
+  id: "paoh-traditional-headgear-moe-myint-zaw",
+  category: "Art & Paintings",
+  title: "Paoh Traditional Headgear",
+  subtitle: "Original acrylic painting by Moe Myint Zaw • 24 x 24 inches • Created 2023 • Certificate included",
+  image: "att.b0im4IlpuNWykr6S62kN7zLmg5zssiLk8N6ZFSNbbz8.jpeg",
+  price: 1550.00,
+  shipping: 0.00,
+  paypalCartId: "JBPWUNTBD23K2",
+  status: "For Sale"
+}
+  
 ];
 
 /*
