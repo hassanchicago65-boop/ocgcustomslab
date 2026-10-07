@@ -331,6 +331,7 @@ const pay = p.paypalCartId
   <article class="product">
     <div class="product-image">
       <img src="${p.image}" alt="${p.title}">
+${p.image2 ? `<img src="${p.image2}" alt="${p.title} second image">` : ""}
       <span class="badge">${p.status || "For Sale"}</span>
     </div>
     <div class="product-body">
