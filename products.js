@@ -52,7 +52,9 @@ status: "For Sale"
   category: "Art & Paintings",
   title: "Paoh Traditional Headgear",
   subtitle: "Original acrylic painting by Moe Myint Zaw • 24 x 24 inches • Created 2023 • Certificate included",
-  image: "att.b0im4IlpuNWykr6S62kN7zLmg5zssiLk8N6ZFSNbbz8.jpeg",
+  image: "att.b0im4IlpuNWykr6S62kN7zLmg5zssiLk8N6ZFSNbbz8.jpeg", 
+    image2: "att.vH5IrDCodiTuW2NsIlPGk3y_KCQYjrpC_dL5Kqt5BVI.jpeg",
+    
   price: 1550.00,
   shipping: 0.00,
   paypalCartId: "JBPWUNTBD23K2",
