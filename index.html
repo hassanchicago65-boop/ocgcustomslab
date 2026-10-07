@@ -334,20 +334,37 @@ const pay = p.paypalCartId
       <span class="badge">${p.status || "For Sale"}</span>
     </div>
     <div class="product-body">
-      <div class="kicker">${p.category}</div>
-      <h3>${p.title}</h3>
-      <div class="subtitle">${p.subtitle || ""}</div>
-      <div class="price-row">
-        <div>
-          <div class="price">${money(p.price)}</div>
-          <div class="tax-note">${generalTax}</div>
-        </div>
-        <div class="ship">Shipping<br><b>${money(p.shipping)}</b></div>
+  <div class="kicker">${p.category}</div>
+
+  ${p.paypalCartId ? "" : `
+    <h3>${p.title}</h3>
+    <div class="subtitle">${p.subtitle || ""}</div>
+    <div class="price-row">
+      <div>
+        <div class="price">${money(p.price)}</div>
+        <div class="tax-note">${generalTax}</div>
       </div>
-      ${pay}
+      <div class="ship">Shipping<br><b>${money(p.shipping)}</b></div>
     </div>
-  </article>`;
-}
+  `}
+
+  ${pay}
+</div>
+ </article>`;
+}     
+      
+      
+      
+        
+          
+          
+        
+        
+      
+      
+
+  
+
 
 function renderNav(){
   document.getElementById("catnav").innerHTML =
