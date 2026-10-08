@@ -212,7 +212,28 @@ main{padding:32px 4%}
 .about-box b{
   color:var(--navy);
 }
+.description-box,
+.certificate-box{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:18px;
+  background:#fff;
+}
 
+.description-box h3,
+.certificate-box h3{
+  margin:0 0 10px 0;
+  font-size:20px;
+  color:var(--navy);
+}
+
+.description-box p,
+.certificate-box p{
+  margin:0;
+  line-height:1.6;
+  color:#475467;
+  font-size:14px;
+}
 @media(max-width:760px){
   .product{
     grid-template-columns:1fr;
@@ -497,46 +518,115 @@ const pay = p.paypalCartId
   
     
     
-  return `
-  <article class="product">
-    <div class="product-image">
-  <img class="product-main" src="${p.image}" alt="${p.title}">
+return `
+<article class="product">
 
-  ${p.image2 ? `
-    <div class="product-thumbs">
-      <img src="${p.image}" alt="${p.title}"
-        onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+  <div class="product-image">
+    <img class="product-main" src="${p.image}" alt="${p.title}">
 
-      <img src="${p.image2}" alt="${p.title} second image"
-        onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
-    </div>
-  ` : ""}
+    ${p.image2 ? `
+      <div class="product-thumbs">
+        <img src="${p.image}" alt="${p.title}"
+          onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
 
-  <span class="badge">${p.status || "For Sale"}</span>
-</div>
+        <img src="${p.image2}" alt="${p.title} certificate"
+          onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+      </div>
+    ` : ""}
+
+    <span class="badge">${p.status || "For Sale"}</span>
+  </div>
+
+  <div class="product-body">
+    <div class="kicker">${p.category}</div>
+
+    ${p.paypalCartId ? "" : `
+      <h3>${p.title}</h3>
+      <div class="price">${money(p.price)}</div>
+      <div class="subtitle">${p.subtitle || ""}</div>
+    `}
+
+    ${pay}
+
+    ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
+      <div class="product-benefits">
+        <div>🚚 <b>Free Shipping</b><br><span>Within U.S.</span></div>
+        <div>🛡️ <b>Certificate Included</b><br><span>Original artwork with COA</span></div>
+      </div>
+
+      <div class="about-box">
+        <h3>About this item</h3>
+        <div><b>Artist</b><span>Moe Myint Zaw</span></div>
+        <div><b>Title</b><span>Paoh Traditional Headgear</span></div>
+        <div><b>Medium</b><span>Acrylic</span></div>
+        <div><b>Size</b><span>24 × 24 inches</span></div>
+        <div><b>Year</b><span>2023</span></div>
+        <div><b>Certificate</b><span>Included</span></div>
+        <div><b>Condition</b><span>Original artwork</span></div>
+      </div>
+
+      <div class="description-box">
+        <h3>Description</h3>
+        <p>
+          This original acrylic painting by Moe Myint Zaw features Paoh traditional headgear
+          with vibrant colors and detailed patterns. The artwork measures 24 × 24 inches
+          and was created in 2023. A Certificate of Appreciation is included.
+        </p>
+      </div>
+
+      <div class="certificate-box">
+        <h3>Certificate of Appreciation</h3>
+        <p>
+          This painting includes a Certificate of Appreciation from the artist confirming
+          it is an original artwork.
+        </p>
+      </div>
+    ` : `
+      <div class="tax-note">${generalTax}</div>
+      <div class="ship">Shipping: <b>${money(p.shipping)}</b></div>
+    `}
+
+  </div>
+</article>`;
+}  
+
+    
+  
+
+  
+    
+      
+        
+
+      
+        
+    
+  
+
+  
+
       
 
       
     
-    <div class="product-body">
-  <div class="kicker">${p.category}</div>
+    
+  
 
-  ${p.paypalCartId ? "" : `
-    <h3>${p.title}</h3>
-    <div class="subtitle">${p.subtitle || ""}</div>
-    <div class="price-row">
-      <div>
-        <div class="price">${money(p.price)}</div>
-        <div class="tax-note">${generalTax}</div>
-      </div>
-      <div class="ship">Shipping<br><b>${money(p.shipping)}</b></div>
-    </div>
-  `}
+  
+    
+    
+    
+      
+        
+        
+    
+      
+    
+  
 
-  ${pay}
-</div>
- </article>`;
-}     
+  
+
+
       
       
       
