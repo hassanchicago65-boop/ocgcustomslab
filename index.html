@@ -585,18 +585,32 @@ return `
     <div class="product-body">
       <div class="kicker">${p.category}</div>
 
-      ${p.paypalCartId ? "" : `
-        <h3>${p.title}</h3>
-        <div class="price">${money(p.price)}</div>
-        <div class="subtitle">${p.subtitle || ""}</div>
-      `}
-
       ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
-        <div class="product-benefits">
-          <div>🚚 <b>Free Shipping</b><br><span>USPS or UPS (U.S. only)</span></div>
-          <div>🛡️ <b>Certificate Included</b><br><span>Original artwork with COA</span></div>
-        </div>
-      ` : ""}
+  <h3>${p.title} – Moe Myint Zaw</h3>
+  <div class="price">${money(p.price)} USD</div>
+` : p.paypalCartId ? "" : `
+  <h3>${p.title}</h3>
+  <div class="price">${money(p.price)}</div>
+  <div class="subtitle">${p.subtitle || ""}</div>
+`}
+        
+        
+    
+      
+
+    
+
+${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
+  <div class="product-benefits">
+    <div>🚚 <b>Free Shipping</b><br><span>USPS or UPS (U.S. only)</span></div>
+    <div>🛡️ <b>Certificate Included</b><br><span>Original artwork with COA</span></div>
+  </div>
+` : ""}  
+        
+          
+          
+        
+      
 
       ${pay}
 
