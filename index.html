@@ -212,6 +212,49 @@ main{padding:32px 4%}
 .about-box b{
   color:var(--navy);
 }
+
+.product-top{
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:24px;
+}
+
+.product-bottom{
+  grid-column:1/-1;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.certificate-content{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:20px;
+  align-items:center;
+}
+
+.certificate-content img{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+
+@media(max-width:760px){
+  .product-top{
+    grid-template-columns:1fr;
+  }
+
+  .product-bottom{
+    padding:16px;
+  }
+
+  .certificate-content{
+    grid-template-columns:1fr;
+  }
+}
+  
+
 .description-box,
 .certificate-box{
   border:1px solid var(--line);
@@ -521,74 +564,96 @@ const pay = p.paypalCartId
 return `
 <article class="product">
 
-  <div class="product-image">
-    <img class="product-main" src="${p.image}" alt="${p.title}">
+  <div class="product-top">
 
-    ${p.image2 ? `
-      <div class="product-thumbs">
-        <img src="${p.image}" alt="${p.title}"
-          onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+    <div class="product-image">
+      <img class="product-main" src="${p.image}" alt="${p.title}">
 
-        <img src="${p.image2}" alt="${p.title} certificate"
-          onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
-      </div>
-    ` : ""}
+      ${p.image2 ? `
+        <div class="product-thumbs">
+          <img src="${p.image}" alt="${p.title}"
+            onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
 
-    <span class="badge">${p.status || "For Sale"}</span>
+          <img src="${p.image2}" alt="${p.title} certificate"
+            onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+        </div>
+      ` : ""}
+
+      <span class="badge">${p.status || "For Sale"}</span>
+    </div>
+
+    <div class="product-body">
+      <div class="kicker">${p.category}</div>
+
+      ${p.paypalCartId ? "" : `
+        <h3>${p.title}</h3>
+        <div class="price">${money(p.price)}</div>
+        <div class="subtitle">${p.subtitle || ""}</div>
+      `}
+
+      ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
+        <div class="product-benefits">
+          <div>🚚 <b>Free Shipping</b><br><span>USPS or UPS (U.S. only)</span></div>
+          <div>🛡️ <b>Certificate Included</b><br><span>Original artwork with COA</span></div>
+        </div>
+      ` : ""}
+
+      ${pay}
+
+      ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
+        <div class="about-box">
+          <h3>About this item</h3>
+          <div><b>Artist</b><span>Moe Myint Zaw</span></div>
+          <div><b>Title</b><span>Paoh Traditional Headgear</span></div>
+          <div><b>Medium</b><span>Acrylic on Canvas</span></div>
+          <div><b>Size</b><span>24 × 24 inches</span></div>
+          <div><b>Year</b><span>2023</span></div>
+          <div><b>Certificate</b><span>Included</span></div>
+          <div><b>Condition</b><span>Original artwork</span></div>
+        </div>
+      ` : `
+        <div class="tax-note">${generalTax}</div>
+        <div class="ship">Shipping: <b>${money(p.shipping)}</b></div>
+      `}
+    </div>
+
   </div>
 
-  <div class="product-body">
-    <div class="kicker">${p.category}</div>
-
-    ${p.paypalCartId ? "" : `
-      <h3>${p.title}</h3>
-      <div class="price">${money(p.price)}</div>
-      <div class="subtitle">${p.subtitle || ""}</div>
-    `}
-
-    ${pay}
-
-    ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
-      <div class="product-benefits">
-        <div>🚚 <b>Free Shipping</b><br><span>Within U.S.</span></div>
-        <div>🛡️ <b>Certificate Included</b><br><span>Original artwork with COA</span></div>
-      </div>
-
-      <div class="about-box">
-        <h3>About this item</h3>
-        <div><b>Artist</b><span>Moe Myint Zaw</span></div>
-        <div><b>Title</b><span>Paoh Traditional Headgear</span></div>
-        <div><b>Medium</b><span>Acrylic</span></div>
-        <div><b>Size</b><span>24 × 24 inches</span></div>
-        <div><b>Year</b><span>2023</span></div>
-        <div><b>Certificate</b><span>Included</span></div>
-        <div><b>Condition</b><span>Original artwork</span></div>
-      </div>
+  ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
+    <div class="product-bottom">
 
       <div class="description-box">
         <h3>Description</h3>
         <p>
-          This original acrylic painting by Moe Myint Zaw features Paoh traditional headgear
-          with vibrant colors and detailed patterns. The artwork measures 24 × 24 inches
+          This original acrylic painting by Moe Myint Zaw features Paoh traditional headgear,
+          showcasing vibrant colors and detailed patterns. The artwork measures 24 × 24 inches
           and was created in 2023. A Certificate of Appreciation is included.
         </p>
       </div>
 
       <div class="certificate-box">
         <h3>Certificate of Appreciation</h3>
-        <p>
-          This painting includes a Certificate of Appreciation from the artist confirming
-          it is an original artwork.
-        </p>
+        <div class="certificate-content">
+          <img src="${p.image2}" alt="Certificate of Appreciation">
+          <p>
+            This painting comes with a Certificate of Appreciation from the artist,
+            confirming it is an original artwork.
+          </p>
+        </div>
       </div>
-    ` : `
-      <div class="tax-note">${generalTax}</div>
-      <div class="ship">Shipping: <b>${money(p.shipping)}</b></div>
-    `}
 
-  </div>
+    </div>
+  ` : ""}
+
 </article>`;
-}  
+}
+
+  
+    
+
+    
+      
+        
 
     
   
