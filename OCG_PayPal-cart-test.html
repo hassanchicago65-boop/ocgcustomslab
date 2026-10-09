@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OCG Marketplace — PayPal Cart Test</title></head>
+<body><p style="font:16px Arial;padding:24px">Loading OCG Marketplace PayPal test…</p>
+<script>
+(async function () {
+  try {
+    const response = await fetch('./index.html', {cache:'no-store'});
+    if (!response.ok) throw new Error('Original homepage could not be loaded');
+    let html = await response.text();
+    if (!/<\/body\s*>/i.test(html)) throw new Error('Missing closing body tag');
+    // Use PayPal's existing official hosted Add to Cart controls, not the sample-only custom cart.
+    // PayPal owns checkout calculations; this page never fabricates payment totals.
+    const extra = `
+<style>
+.ocg-paypal-cart-test {position:fixed;right:14px;bottom:16px;z-index:9999;background:#fff;border:1px solid #d9a438;border-radius:12px;padding:12px;box-shadow:0 5px 22px #0003;max-width:calc(100vw - 28px)}
+.ocg-paypal-cart-test strong {font:700 13px Arial;display:block;color:#061b33;margin-bottom:8px}
+</style>
+<div class="ocg-paypal-cart-test"><strong>PayPal Cart — Test page</strong><paypal-cart-button data-id="pp-view-cart"></paypal-cart-button></div>
+<script>
+(function () {
+  function initCart() {
+    if (window.cartPaypal && typeof window.cartPaypal.Cart === 'function') {
+      window.cartPaypal.Cart({id:'pp-view-cart'});
+    } else {
+      const notice=document.createElement('small');
+      notice.textContent='PayPal cart did not load. Please refresh.';
+      document.querySelector('.ocg-paypal-cart-test').appendChild(notice);
+    }
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',initCart,{once:true});
+  else initCart();
+})();
+<\/script>`;
+    html = html.replace(/<\/body\s*>/i, extra + '</body>');
+    document.open(); document.write(html); document.close();
+  } catch (error) {
+    document.body.textContent = 'Unable to load OCG PayPal preview: ' + error.message;
+  }
+})();
+</script></body></html>
