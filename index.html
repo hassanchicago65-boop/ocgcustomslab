@@ -1185,7 +1185,7 @@ renderCatalog();
     )) return;
 
     const article = e.target.closest("article.product");
-    if(!article) 
+    if(!article) return;
     const p = getProduct(article);
     if(p) openProduct(p);
   });
