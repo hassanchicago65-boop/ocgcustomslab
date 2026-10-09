@@ -1185,42 +1185,45 @@ renderCatalog();
     )) return;
 
     const article = e.target.closest("article.product");
-    if(!article) return;
-detail.querySelectorAll(".ocg-tabs div").forEach(tab => {
-  tab.onclick = () => {
-    const box = detail.querySelector(".ocg-description");
-    const type = tab.dataset.tab;
-
-    detail.querySelectorAll(".ocg-tabs div").forEach(t => {
-      t.style.background = "#f3f5f8";
-    });
-    tab.style.background = "#d9a438";
-
-    if(type === "description"){
-      box.innerHTML = p.subtitle || p.title;
-    }
-
-    if(type === "info"){
-      box.innerHTML = `
-        <b>Item Information</b><br><br>
-        ${rows(p).map(r => `${r[0]}: ${r[1]}`).join("<br>")}
-      `;
-    }
-
-    if(type === "shipping"){
-      box.innerHTML = `
-        <b>Shipping & Returns</b><br><br>
-        Shipping: ${p.shipping === 0 ? "Free Shipping" : money(p.shipping)}<br>
-        Secure packaging included.<br>
-        No returns accepted unless the item arrives damaged.
-      `;
-    }
-  };
-});
+    if(!article) 
     const p = getProduct(article);
     if(p) openProduct(p);
   });
+detail.addEventListener("click", e => {
+  const tab = e.target.closest(".ocg-tabs div");
+  if(!tab) return;
 
+  const title = detail.querySelector(".ocg-detail-title")?.textContent.trim();
+  const p = products.find(x => x.title === title);
+  if(!p) return;
+
+  const box = detail.querySelector(".ocg-description");
+  const type = tab.dataset.tab;
+
+  detail.querySelectorAll(".ocg-tabs div").forEach(t => {
+    t.style.background = "#f3f5f8";
+  });
+  tab.style.background = "#d9a438";
+
+  if(type === "description"){
+    box.innerHTML = p.subtitle || p.title;
+  }
+
+  if(type === "info"){
+    box.innerHTML =
+      "<b>Item Information</b><br><br>" +
+      rows(p).map(r => r[0] + ": " + r[1]).join("<br>");
+  }
+
+  if(type === "shipping"){
+    box.innerHTML =
+      "<b>Shipping & Returns</b><br><br>" +
+      "Shipping: " +
+      (p.shipping === 0 ? "Free Shipping" : money(p.shipping)) +
+      "<br>Secure packaging included.<br>" +
+      "No returns accepted unless the item arrives damaged.";
+  }
+});
 })();
 </script>
 </body>
