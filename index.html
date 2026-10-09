@@ -755,7 +755,9 @@ function renderCatalog(query=""){
 document.getElementById("searchInput").addEventListener("input", e=>renderCatalog(e.target.value));
 renderNav();
 renderCatalog();
-   
+   products
+  .filter(p => p.paypalCartId)
+  .forEach(p => cartPaypal.AddToCart({ id: p.paypalCartId }));
   
 
     
