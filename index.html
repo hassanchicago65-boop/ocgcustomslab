@@ -815,5 +815,380 @@ renderCatalog();
 
   
 </script>
+    
+<script>
+    /* OCG PRODUCT DETAIL VIEW */
+(() => {
+  const style = document.createElement("style");
+  style.textContent = `
+    #ocgDetail{
+      display:none;
+      max-width:1180px;
+      margin:auto;
+      padding:28px 4% 60px;
+      background:#fff;
+    }
+
+    #ocgDetail.show{display:block;}
+
+    .ocg-back{
+      font-weight:800;
+      color:#061b33;
+      margin-bottom:20px;
+      cursor:pointer;
+    }
+
+    .ocg-detail-grid{
+      display:grid;
+      grid-template-columns:1.08fr .92fr;
+      gap:40px;
+      align-items:start;
+    }
+
+    .ocg-gallery{
+      border:1px solid #e4e7ec;
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+    }
+
+    .ocg-gallery-main{
+      width:100%;
+      aspect-ratio:1/1;
+      object-fit:contain;
+      display:block;
+      max-height:620px;
+    }
+
+    .ocg-detail-thumbs{
+      display:flex;
+      gap:10px;
+      padding:12px;
+      border-top:1px solid #e4e7ec;
+    }
+
+    .ocg-detail-thumbs img{
+      width:92px;
+      height:76px;
+      object-fit:cover;
+      border:1px solid #d1d5db;
+      border-radius:9px;
+      cursor:pointer;
+    }
+
+    .ocg-detail-category{
+      color:#d92c2f;
+      font-size:13px;
+      font-weight:900;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    .ocg-detail-title{
+      font-size:38px;
+      line-height:1.12;
+      margin:0 0 14px;
+      color:#061b33;
+    }
+
+    .ocg-detail-price{
+      font-size:36px;
+      font-weight:900;
+      color:#b57c00;
+      margin-bottom:18px;
+    }
+
+    .ocg-detail-icons{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .ocg-detail-icons div{
+      font-size:13px;
+      font-weight:800;
+      color:#061b33;
+    }
+
+    .ocg-about{
+      margin-top:18px;
+      border:1px solid #e4e7ec;
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    .ocg-about h2{
+      margin:0;
+      padding:14px;
+      background:#f6f8fb;
+      color:#061b33;
+      font-size:20px;
+    }
+
+    .ocg-row{
+      display:grid;
+      grid-template-columns:130px 1fr;
+      padding:11px 14px;
+      border-top:1px solid #e4e7ec;
+      gap:12px;
+      font-size:14px;
+    }
+
+    .ocg-tabs{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      margin-top:24px;
+      border:1px solid #e4e7ec;
+      border-radius:8px;
+      overflow:hidden;
+    }
+
+    .ocg-tabs div{
+      padding:13px 8px;
+      text-align:center;
+      font-weight:900;
+      background:#f3f5f8;
+    }
+
+    .ocg-tabs div:first-child{
+      background:#d9a438;
+    }
+
+    .ocg-description{
+      padding:18px 4px;
+      line-height:1.6;
+      color:#344054;
+    }
+
+    .ocg-related{
+      margin-top:35px;
+      border-top:1px solid #e4e7ec;
+      padding-top:25px;
+    }
+
+    .ocg-related-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:15px;
+    }
+
+    .ocg-related-card{
+      border:1px solid #e4e7ec;
+      border-radius:10px;
+      overflow:hidden;
+      cursor:pointer;
+    }
+
+    .ocg-related-card img{
+      width:100%;
+      aspect-ratio:1/1;
+      object-fit:cover;
+    }
+
+    .ocg-related-card div{
+      padding:10px;
+    }
+
+    .ocg-related-card b{
+      display:block;
+      color:#061b33;
+      margin-bottom:5px;
+    }
+
+    .ocg-related-card span{
+      color:#b57c00;
+      font-weight:900;
+    }
+
+    @media(max-width:800px){
+      .ocg-detail-grid{
+        grid-template-columns:1fr;
+        gap:22px;
+      }
+
+      .ocg-detail-title{font-size:30px;}
+      .ocg-detail-price{font-size:32px;}
+      .ocg-detail-icons{grid-template-columns:1fr;}
+      .ocg-related-grid{grid-template-columns:repeat(2,1fr);}
+      .ocg-row{grid-template-columns:110px 1fr;}
+    }
+  `;
+  document.head.appendChild(style);
+
+  const mainPage = document.querySelector("main");
+
+  const detail = document.createElement("section");
+  detail.id = "ocgDetail";
+  mainPage.parentNode.insertBefore(detail, mainPage.nextSibling);
+
+  const money = n => "$" + Number(n || 0).toFixed(2);
+
+  function getProduct(article){
+    const img = article.querySelector(".product-main");
+    if(!img) return null;
+
+    const src = img.getAttribute("src") || "";
+
+    return products.find(p =>
+      src.includes(p.image)
+    );
+  }
+
+  function rows(p){
+    if(p.category === "Trading Cards"){
+      return [
+        ["Category","Trading Card"],
+        ["Product",p.title],
+        ["Details",p.subtitle || "—"],
+        ["Condition",p.status || "For Sale"]
+      ];
+    }
+
+    if(p.category === "Coins"){
+      return [
+        ["Category","Coin"],
+        ["Product",p.title],
+        ["Details",p.subtitle || "—"],
+        ["Condition",p.status || "For Sale"]
+      ];
+    }
+
+    if(p.category === "Art & Paintings"){
+      return [
+        ["Artist","Moe Myint Zaw"],
+        ["Title",p.title],
+        ["Medium","Acrylic on Canvas"],
+        ["Size","24 × 24 inches"],
+        ["Year","2023"],
+        ["Certificate","Included"]
+      ];
+    }
+
+    return [
+      ["Category",p.category],
+      ["Product",p.title],
+      ["Details",p.subtitle || "—"],
+      ["Status",p.status || "For Sale"]
+    ];
+  }
+
+  function openProduct(p){
+    const thumbs = [p.image,p.image2]
+      .filter(Boolean)
+      .map(img => `<img src="${img}">`)
+      .join("");
+
+    const related = products
+      .filter(x => x.id !== p.id)
+      .slice(0,4)
+      .map(x => `
+        <div class="ocg-related-card" data-id="${x.id}">
+          <img src="${x.image}">
+          <div>
+            <b>${x.title}</b>
+            <span>${money(x.price)} USD</span>
+          </div>
+        </div>
+      `).join("");
+
+    detail.innerHTML = `
+      <div class="ocg-back">← Back to Shop</div>
+
+      <div class="ocg-detail-grid">
+
+        <div>
+          <div class="ocg-gallery">
+            <img class="ocg-gallery-main" src="${p.image}">
+            <div class="ocg-detail-thumbs">${thumbs}</div>
+          </div>
+
+          <div class="ocg-tabs">
+            <div>Description</div>
+            <div>Item Info</div>
+            <div>Shipping & Returns</div>
+          </div>
+
+          <div class="ocg-description">
+            ${p.subtitle || p.title}
+          </div>
+        </div>
+
+        <div>
+          <div class="ocg-detail-category">${p.category}</div>
+
+          <h1 class="ocg-detail-title">${p.title}</h1>
+
+          <div class="ocg-detail-price">
+            ${money(p.price)} USD
+          </div>
+
+          <div class="ocg-detail-icons">
+            <div>🚚 ${p.shipping === 0 ? "Free Shipping" : "US Shipping"}</div>
+            <div>🛡️ Secure Checkout</div>
+            <div>📦 Secure Packaging</div>
+          </div>
+
+          ${
+            p.paypalCartId
+            ? `<paypal-add-to-cart-button data-id="${p.paypalCartId}"></paypal-add-to-cart-button>`
+            : ""
+          }
+
+          <div class="ocg-about">
+            <h2>About This Item</h2>
+            ${rows(p).map(r =>
+              `<div class="ocg-row"><b>${r[0]}</b><span>${r[1]}</span></div>`
+            ).join("")}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ocg-related">
+        <h2>You May Also Like</h2>
+        <div class="ocg-related-grid">${related}</div>
+      </div>
+    `;
+
+    mainPage.style.display = "none";
+    detail.classList.add("show");
+    window.scrollTo(0,0);
+
+    detail.querySelector(".ocg-back").onclick = () => {
+      detail.classList.remove("show");
+      mainPage.style.display = "";
+      window.scrollTo(0,0);
+    };
+
+    detail.querySelectorAll(".ocg-detail-thumbs img").forEach(img => {
+      img.onclick = () => {
+        detail.querySelector(".ocg-gallery-main").src = img.src;
+      };
+    });
+
+    detail.querySelectorAll(".ocg-related-card").forEach(card => {
+      card.onclick = () => {
+        const p2 = products.find(x => x.id === card.dataset.id);
+        if(p2) openProduct(p2);
+      };
+    });
+  }
+
+  document.addEventListener("click", e => {
+    if(e.target.closest(
+      "paypal-add-to-cart-button, button, select, input, a"
+    )) return;
+
+    const article = e.target.closest("article.product");
+    if(!article) return;
+
+    const p = getProduct(article);
+    if(p) openProduct(p);
+  });
+
+})();
+</script>
 </body>
 </html>
+
