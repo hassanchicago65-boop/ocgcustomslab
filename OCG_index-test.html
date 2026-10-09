@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OCG Marketplace – Cart Test</title></head>
+<body>
+<p style="font:16px Arial;padding:24px">Loading OCG Marketplace preview…</p>
+<script>
+(async function () {
+  try {
+    const response = await fetch('./index.html', {cache:'no-store'});
+    if (!response.ok) throw new Error('Original homepage could not be loaded');
+    let html = await response.text();
+    // Load the existing OCG design unchanged, adding only the opt-in test cart.
+    // Force preview query for the already uploaded ocg-cart-preview.js.
+    html = html.replace(/<\/body\s*>/i, '<script>history.replaceState(null,"",location.pathname+"?cartPreview=1")<\/script><script src="ocg-cart-preview.js"><\/script></body>');
+    if (!html.includes('ocg-cart-preview.js')) throw new Error('HTML body end not found');
+    document.open(); document.write(html); document.close();
+  } catch (error) {
+    document.body.textContent = 'Unable to load OCG preview: ' + error.message;
+  }
+})();
+</script>
+</body></html>
