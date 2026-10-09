@@ -585,10 +585,10 @@ return `
     <div class="product-body">
       <div class="kicker">${p.category}</div>
 
-      ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
-  <h3>${p.title} – Moe Myint Zaw</h3>
-  <div class="price">${money(p.price)} USD</div>
-` : p.paypalCartId ? "" : `
+      
+  
+
+${p.paypalCartId ? "" : `
   <h3>${p.title}</h3>
   <div class="price">${money(p.price)}</div>
   <div class="subtitle">${p.subtitle || ""}</div>
