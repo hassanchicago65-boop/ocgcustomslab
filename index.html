@@ -1108,11 +1108,11 @@ renderCatalog();
             <div class="ocg-detail-thumbs">${thumbs}</div>
           </div>
 
-          <div class="ocg-tabs">
-  <div data-tab="description">Description</div>
-  <div data-tab="info">Item Info</div>
-  <div data-tab="shipping">Shipping & Returns</div>
-</div>
+          
+  
+  
+  
+
             
             
             
@@ -1154,11 +1154,25 @@ renderCatalog();
 
       </div>
 
-      <div class="ocg-related">
-        <h2>You May Also Like</h2>
-        <div class="ocg-related-grid">${related}</div>
-      </div>
-    `;
+    <div class="ocg-tabs">
+  <div data-tab="description">Description</div>
+  <div data-tab="info">Item Info</div>
+  <div data-tab="shipping">Shipping & Returns</div>
+</div>
+
+<div class="ocg-description">
+  ${p.subtitle || p.title}
+</div>
+
+<div class="ocg-related">
+  <h2>You May Also Like</h2>
+  <div class="ocg-related-grid">${related}</div>
+</div>
+`;  
+        
+        
+      
+    
 
     mainPage.style.display = "none";
     detail.classList.add("show");
