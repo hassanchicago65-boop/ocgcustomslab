@@ -985,10 +985,14 @@ renderCatalog();
     }
 
     @media(max-width:800px){
-      .ocg-detail-grid{
-        grid-template-columns:1fr;
-        gap:22px;
-      }
+     .ocg-detail-grid{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+} 
+        
+        
+      
 .ocg-detail-grid > div:first-child{
   display:contents;
 }
