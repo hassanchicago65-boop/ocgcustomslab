@@ -989,7 +989,25 @@ renderCatalog();
         grid-template-columns:1fr;
         gap:22px;
       }
+.ocg-detail-grid > div:first-child{
+  display:contents;
+}
 
+.ocg-gallery{
+  order:1;
+}
+
+.ocg-detail-grid > div:nth-child(2){
+  order:2;
+}
+
+.ocg-tabs{
+  order:3;
+}
+
+.ocg-description{
+  order:4;
+}
       .ocg-detail-title{font-size:30px;}
       .ocg-detail-price{font-size:32px;}
       .ocg-detail-icons{grid-template-columns:1fr;}
