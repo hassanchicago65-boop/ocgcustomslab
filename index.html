@@ -745,15 +745,14 @@ function productCard(p){
 </div>
     </div>
 
-    <div class="ocg-tabs">
-      <div data-tab="description">Description</div>
-      <div data-tab="info">Item Info</div>
-      <div data-tab="shipping">Shipping & Returns</div>
-    </div>
+    
+      
+      
+      
 
-    <div class="ocg-description">
-      ${p.subtitle || p.title}
-    </div>
+    
+    
+    
 
   
 
@@ -1295,7 +1294,7 @@ renderCatalog();
 
   document.addEventListener("click", e => {
     if(e.target.closest(
-  "paypal-add-to-cart-button, button, select, input, a, .ocg-tabs"
+  "paypal-add-to-cart-button, button, select, input, a
 )) return;
       
     
