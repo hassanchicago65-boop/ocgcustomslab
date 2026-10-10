@@ -623,70 +623,47 @@ function productCard(p){
 
       <div class="product-body">
 
-        <div class="kicker">${p.category}</div>
+  <div class="kicker">${p.category}</div>
 
-        ${p.paypalCartId ? "" : `
-          <h3>${p.title}</h3>
-          <div class="price">${money(p.price)} USD</div>
-          <div class="subtitle">${p.subtitle || ""}</div>
-        `}
+  <h3>${p.title}</h3>
 
-        ${pay}
+  <div class="price">${money(p.price)} USD</div>
 
-        <div class="product-benefits">
-          <div>
-            🚚 <b>${p.shipping === 0 ? "Free Shipping" : "US Shipping"}</b><br>
-            <span>
-              ${p.shipping === 0
-                ? "USPS or UPS (U.S. only)"
-                : "Secure tracked delivery"}
-            </span>
-          </div>
+  <div class="subtitle">${p.subtitle || ""}</div>
 
-          <div>
-            🛡️ <b>Secure Checkout</b><br>
-            <span>Pay securely with PayPal</span>
-          </div>
+  ${pay}
 
-          <div>
-            📦 <b>Secure Packaging</b><br>
-            <span>Carefully packed for delivery</span>
-          </div>
-        </div>
+  <div class="product-benefits">
+    <div>
+      🚚 <b>${p.shipping === 0 ? "Free Shipping" : "US Shipping"}</b><br>
+      <span>
+        ${p.shipping === 0
+          ? "USPS or UPS (U.S. only)"
+          : "Secure tracked delivery"}
+      </span>
+    </div>
+
+    <div>
+      🛡️ <b>Secure Checkout</b><br>
+      <span>Pay securely with PayPal</span>
+    </div>
+
+    <div>
+      📦 <b>Secure Packaging</b><br>
+      <span>Carefully packed for delivery</span>
+    </div>
+  </div>
+
+</div>
 
         
-          
 
-        
-            
-              
-              
-            
+
           
         
 
-        <div class="tax-note">${generalTax}</div>
 
-        <div class="ship">
-          Shipping:
-          <b>${p.shipping === 0 ? "Free" : money(p.shipping)}</b>
-        </div>
 
-      </div>
-    </div>
-
-    <div class="ocg-tabs">
-      <div data-tab="description">Description</div>
-      <div data-tab="info">Item Info</div>
-      <div data-tab="shipping">Shipping & Returns</div>
-    </div>
-
-    <div class="ocg-description">
-      ${p.subtitle || p.title}
-    </div>
-
-  </article>`;
-}
   
 
   
