@@ -342,7 +342,61 @@ paypal-add-to-cart-button{order:5;}
 .product-benefits{order:6;}
 
 }
+@media(max-width:760px){
 
+  .product-top{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .product-image{
+    width:100%;
+    border-radius:12px;
+  }
+
+  .product-main{
+    width:100%;
+    max-height:none;
+    object-fit:contain;
+  }
+
+  .product-body{
+    padding:14px 4px;
+    gap:14px;
+  }
+
+  .kicker{
+    font-size:11px;
+    margin-bottom:0;
+  }
+
+  paypal-add-to-cart-button{
+    width:100%;
+    margin:2px 0 4px;
+  }
+
+  .product-benefits{
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:12px;
+    border-radius:10px;
+  }
+
+  .ocg-tabs{
+    margin-top:16px;
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .ocg-tabs div{
+    font-size:12px;
+    padding:12px 5px;
+  }
+
+  .ocg-description{
+    padding:14px 4px 20px;
+  }
+}
 
   
 
