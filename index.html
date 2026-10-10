@@ -1281,7 +1281,55 @@ if(cartButton){
   cartButton.style.borderRadius = "10px";
   cartButton.style.boxShadow = "0 4px 18px rgba(0,0,0,.18)";
 }
+const mobileProductFix = document.createElement("style");
+mobileProductFix.textContent = `
+@media (max-width:800px){
 
+  .ocg-detail-grid{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:22px !important;
+  }
+
+  .ocg-detail-grid > div:first-child{
+    display:block !important;
+    order:1 !important;
+  }
+
+  .ocg-detail-grid > div:nth-child(2){
+    display:flex !important;
+    flex-direction:column !important;
+    order:2 !important;
+  }
+
+  .ocg-detail-category{
+    order:1;
+  }
+
+  .ocg-detail-title{
+    order:2;
+  }
+
+  .ocg-detail-price{
+    order:3;
+  }
+
+  paypal-add-to-cart-button{
+    order:4;
+    margin:14px 0;
+  }
+
+  .ocg-detail-icons{
+    order:5;
+  }
+
+  .ocg-tabs{
+    margin-top:22px !important;
+  }
+}
+`;
+
+document.head.appendChild(mobileProductFix);
 })();
 </script>
 </body>
