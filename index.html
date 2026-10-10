@@ -1311,6 +1311,7 @@ detail.addEventListener("click", e => {
 
 
 e.stopPropagation();
+const keepScroll = window.scrollY;
   const title = detail.querySelector(".ocg-detail-title")?.textContent.trim();
   const p = products.find(x => x.title === title);
   if(!p) return;
@@ -1340,8 +1341,9 @@ e.stopPropagation();
       (p.shipping === 0 ? "Free Shipping" : money(p.shipping)) +
       "<br>Secure packaging included.<br>" +
       "No returns accepted unless the item arrives damaged.";
-  }
+}
 });
+
 document.getElementById("catnav").addEventListener("click", e => {
   const link = e.target.closest("a");
   if(!link) return;
