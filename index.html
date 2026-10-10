@@ -573,138 +573,121 @@ function slug(s){
 function money(v){ return "$" + Number(v||0).toFixed(2); }
 
 function productCard(p){
-  const generalTax = p.category === "Food & Beverages" ? "Food tax handled separately" : "10.5% tax where applicable";
-const pay = p.paypalCartId
-  ? `<paypal-add-to-cart-button data-id="${p.paypalCartId}"></paypal-add-to-cart-button>`
-  : p.paypal
-  ? `<a class="paypal" href="${p.paypal}" target="_blank" rel="noopener">Buy with PayPal</a>`
-  : `<a class="paypal disabled">Payment Link Coming Soon</a>`; 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
-    
-return `
-<article class="product">
+  const generalTax =
+    p.category === "Food & Beverages"
+      ? "Food tax handled separately"
+      : "10.5% tax where applicable";
 
-  <div class="product-top">
+  const pay = p.paypalCartId
+    ? `<paypal-add-to-cart-button data-id="${p.paypalCartId}"></paypal-add-to-cart-button>`
+    : p.paypal
+    ? `<a class="paypal" href="${p.paypal}" target="_blank" rel="noopener">Buy with PayPal</a>`
+    : `<a class="paypal disabled">Payment Link Coming Soon</a>`;
 
-    <div class="product-image">
-      <img class="product-main" src="${p.image}" alt="${p.title}">
+  let facts = [
+    ["Category", p.category],
+    ["Item", p.title],
+    ["Details", p.subtitle || "—"],
+    ["Condition", p.status || "For Sale"]
+  ];
 
-      ${p.image2 ? `
-        <div class="product-thumbs">
-          <img src="${p.image}" alt="${p.title}"
-            onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+  if(p.category === "Art & Paintings"){
+    facts = [
+      ["Artist","Moe Myint Zaw"],
+      ["Title",p.title],
+      ["Medium","Acrylic on Canvas"],
+      ["Size","24 × 24 inches"],
+      ["Year","2023"],
+      ["Certificate","Included"]
+    ];
+  }
 
-          <img src="${p.image2}" alt="${p.title} certificate"
-            onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+  return `
+  <article class="product">
+
+    <div class="product-top">
+
+      <div class="product-image">
+        <img class="product-main" src="${p.image}" alt="${p.title}">
+
+        ${p.image2 ? `
+          <div class="product-thumbs">
+            <img src="${p.image}"
+              onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+
+            <img src="${p.image2}"
+              onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="product-body">
+
+        <div class="kicker">${p.category}</div>
+
+        ${p.paypalCartId ? "" : `
+          <h3>${p.title}</h3>
+          <div class="price">${money(p.price)} USD</div>
+          <div class="subtitle">${p.subtitle || ""}</div>
+        `}
+
+        ${pay}
+
+        <div class="product-benefits">
+          <div>
+            🚚 <b>${p.shipping === 0 ? "Free Shipping" : "US Shipping"}</b><br>
+            <span>
+              ${p.shipping === 0
+                ? "USPS or UPS (U.S. only)"
+                : "Secure tracked delivery"}
+            </span>
+          </div>
+
+          <div>
+            🛡️ <b>Secure Checkout</b><br>
+            <span>Pay securely with PayPal</span>
+          </div>
+
+          <div>
+            📦 <b>Secure Packaging</b><br>
+            <span>Carefully packed for delivery</span>
+          </div>
         </div>
-      ` : ""}
 
-      <span class="badge">${p.status || "For Sale"}</span>
-    </div>
-
-    <div class="product-body">
-      <div class="kicker">${p.category}</div>
-
-      
-  
-
-${p.paypalCartId ? "" : `
-<h3>${p.title}</h3>
-<div class="price">${money(p.price)} USD</div>
-<div class="subtitle">${p.subtitle || ""}</div>
-`}
-
-
-  
-  
-  
-
-        
-        
-    
-      
-
-    
-
-${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
-  <div class="product-benefits">
-    <div>🚚 <b>Free Shipping</b><br><span>USPS or UPS (U.S. only)</span></div>
-    <div>🛡️ <b>Certificate Included</b><br><span>Original artwork with COA</span></div>
-  </div>
-` : ""}  
-        
-          
-          
-        
-      
-
-      ${pay}
-
-      ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
         <div class="about-box">
-          <h3>About this item</h3>
-          <div><b>Artist</b><span>Moe Myint Zaw</span></div>
-          <div><b>Title</b><span>Paoh Traditional Headgear</span></div>
-          <div><b>Medium</b><span>Acrylic on Canvas</span></div>
-          <div><b>Size</b><span>24 × 24 inches</span></div>
-          <div><b>Year</b><span>2023</span></div>
-          <div><b>Certificate</b><span>Included</span></div>
-          <div><b>Condition</b><span>Original artwork</span></div>
+          <h3>About This Item</h3>
+
+          ${facts.map(r => `
+            <div>
+              <b>${r[0]}</b>
+              <span>${r[1]}</span>
+            </div>
+          `).join("")}
         </div>
-      ` : `
+
         <div class="tax-note">${generalTax}</div>
-        <div class="ship">Shipping: <b>${money(p.shipping)}</b></div>
-      `}
-    </div>
 
-  </div>
-
-  ${p.id === "paoh-traditional-headgear-moe-myint-zaw" ? `
-    <div class="product-bottom">
-
-      <div class="description-box">
-        <h3>Description</h3>
-        <p>
-          This original acrylic painting by Moe Myint Zaw features Paoh traditional headgear,
-          showcasing vibrant colors and detailed patterns. The artwork measures 24 × 24 inches
-          and was created in 2023. A Certificate of Appreciation is included.
-        </p>
-      </div>
-
-      <div class="certificate-box">
-        <h3>Certificate of Appreciation</h3>
-        <div class="certificate-content">
-          <img src="${p.image2}" alt="Certificate of Appreciation">
-          <p>
-            This painting comes with a Certificate of Appreciation from the artist,
-            confirming it is an original artwork.
-          </p>
+        <div class="ship">
+          Shipping:
+          <b>${p.shipping === 0 ? "Free" : money(p.shipping)}</b>
         </div>
+
       </div>
-
     </div>
-  ` : ""}
 
-</article>`;
+    <div class="ocg-tabs">
+      <div data-tab="description">Description</div>
+      <div data-tab="info">Item Info</div>
+      <div data-tab="shipping">Shipping & Returns</div>
+    </div>
+
+    <div class="ocg-description">
+      ${p.subtitle || p.title}
+    </div>
+
+  </article>`;
 }
+  
 
   
     
