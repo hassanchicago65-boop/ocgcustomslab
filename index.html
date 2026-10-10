@@ -1295,7 +1295,7 @@ renderCatalog();
 
   document.addEventListener("click", e => {
     if(e.target.closest(
-  "paypal-add-to-cart-button, button, select, input, a"
+  "paypal-add-to-cart-button, button, select, input, a, .ocg-tabs"
 )) return;
       
     
@@ -1310,7 +1310,7 @@ detail.addEventListener("click", e => {
   if(!tab) return;
 
 
-e.stopPropagation();
+
 const keepScroll = window.scrollY;
   const title = detail.querySelector(".ocg-detail-title")?.textContent.trim();
   const p = products.find(x => x.title === title);
