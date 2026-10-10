@@ -1224,6 +1224,45 @@ detail.addEventListener("click", e => {
       "No returns accepted unless the item arrives damaged.";
   }
 });
+document.getElementById("catnav").addEventListener("click", e => {
+  const link = e.target.closest("a");
+  if(!link) return;
+
+  const target = link.getAttribute("href");
+  if(!target || !target.startsWith("#")) return;
+
+  e.preventDefault();
+
+  detail.classList.remove("show");
+  mainPage.style.display = "";
+
+  setTimeout(() => {
+    const section = document.querySelector(target);
+    if(section){
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+    history.replaceState(null, "", target);
+  }, 100);
+});
+
+const cartButton = document.querySelector(
+  'paypal-cart-button[data-id="pp-view-cart"]'
+);
+
+if(cartButton){
+  cartButton.style.position = "fixed";
+  cartButton.style.right = "14px";
+  cartButton.style.bottom = "18px";
+  cartButton.style.zIndex = "9999";
+  cartButton.style.background = "#ffffff";
+  cartButton.style.padding = "6px";
+  cartButton.style.borderRadius = "10px";
+  cartButton.style.boxShadow = "0 4px 18px rgba(0,0,0,.18)";
+}
+
 })();
 </script>
 </body>
