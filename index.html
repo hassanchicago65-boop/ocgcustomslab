@@ -754,24 +754,24 @@ function productCard(p){
     <div class="ocg-description">
       ${p.subtitle || p.title}
     </div>
-<div class="ocg-related">
-  <h2>You May Also Like</h2>
 
-  <div class="ocg-related-grid">
-    ${products
-      .filter(x => x.id !== p.id)
-      .slice(0,4)
-      .map(x => `
-        <div class="ocg-related-card" data-id="${x.id}">
-          <img src="${x.image}">
-          <div>
-            <b>${x.title}</b>
-            <span>${money(x.price)} USD</span>
-          </div>
-        </div>
-      `).join("")}
-  </div>
-</div>
+  
+
+  
+    
+      
+      
+      
+        
+          
+          
+            
+            
+          
+        
+    
+  
+
   </article>`;
 }
         
