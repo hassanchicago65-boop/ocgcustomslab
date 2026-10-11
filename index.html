@@ -709,11 +709,13 @@ function productCard(p){
 
   <div class="kicker">${p.category}</div>
 
-  ${p.paypalCartId ? "" : `
   <h3>${p.title}</h3>
-  <div class="price">${money(p.price)} USD</div>
-  <div class="subtitle">${p.subtitle || ""}</div>
-`}
+<div class="price">${money(p.price)} USD</div>
+<div class="subtitle">${p.subtitle || ""}</div>
+  
+  
+  
+
 
   
 
