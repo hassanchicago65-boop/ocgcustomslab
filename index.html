@@ -1196,7 +1196,43 @@ renderCatalog();
     ];
   }
 
-  function openProduct(p){
+    function openProduct(p){
+    const restoreCart = () => {
+      const state = openProduct.cartState;
+      if (state) {
+        state.home.appendChild(state.button);
+        openProduct.cartState = null;
+      }
+    };
+
+    restoreCart();
+
+    if (!openProduct.cartObserver) {
+      openProduct.cartObserver = new MutationObserver(() => {
+        if (!detail.classList.contains("show")) restoreCart();
+      });
+      openProduct.cartObserver.observe(detail, {
+        attributes: true,
+        attributeFilter: ["class"]
+      });
+    }
+
+    if (p.paypalCartId) {
+      const selector =
+        `paypal-add-to-cart-button[data-id="${p.paypalCartId}"]`;
+      const button = mainPage.querySelector(selector);
+
+      if (button) {
+        const state = { button, home: button.parentNode };
+        openProduct.cartState = state;
+
+        requestAnimationFrame(() => {
+          if (openProduct.cartState !== state) return;
+          const placeholder = detail.querySelector(selector);
+          if (placeholder) placeholder.replaceWith(button);
+        });
+      }
+    }
     const thumbs = [p.image,p.image2]
       .filter(Boolean)
       .map(img => `<img src="${img}">`)
