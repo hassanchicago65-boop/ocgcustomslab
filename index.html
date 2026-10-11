@@ -717,10 +717,22 @@ function productCard(p){
 <div class="subtitle">${p.subtitle || ""}</div>
 <style>
 [id^="paypal-form-fields-container-"] .item-header,
+[id^="paypal-form-fields-container-"] .item-description,
 [id^="paypal-form-fields-container-"] .carousel-container {
   display: none !important;
 }
-</style>  
+
+@media (max-width:760px) {
+  .product-body > .paypal-area {
+    order: 5;
+    width: 100%;
+  }
+}
+</style>
+
+  
+
+
   
   
 
