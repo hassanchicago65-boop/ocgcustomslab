@@ -715,7 +715,12 @@ function productCard(p){
   <h3>${p.title}</h3>
 <div class="price">${money(p.price)} USD</div>
 <div class="subtitle">${p.subtitle || ""}</div>
-  
+<style>
+[id^="paypal-form-fields-container-"] .item-header,
+[id^="paypal-form-fields-container-"] .carousel-container {
+  display: none !important;
+}
+</style>  
   
   
 
