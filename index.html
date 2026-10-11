@@ -519,10 +519,15 @@ paypal-add-to-cart-button{order:5;}
 </script>
 <nav class="catnav" id="catnav"></nav>
 
-<section class="hero" id="top">
+<section class="hero" id="top"
+  style="background:linear-gradient(120deg,#071b32,#183b58)">
   <div class="hero-inner">
     <h1>Collect<br><span>What You Love</span></h1>
-    <p>Trading Cards • Coins • Art • Ceramics • Stamps • Vintage Collectibles & More<br>Quality items for collectors.</p>
+    <p>
+      Trading Cards • Coins • Art • Ceramics • Stamps •
+      Vintage Collectibles & More<br>
+      Quality items for collectors.
+    </p>
     <div class="hero-actions">
       <a class="btn btn-gold" href="#catalog">Shop Now →</a>
       <a class="btn btn-white" href="#about">About OCG</a>
@@ -530,7 +535,44 @@ paypal-add-to-cart-button{order:5;}
   </div>
 </section>
 
-<section class="trust">
+<script>
+document.querySelectorAll(".hero-actions a").forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+
+    document.getElementById("ocgDetail")
+      ?.classList.remove("show");
+    document.querySelector("main").style.display = "";
+
+    const target = document.querySelector(
+      link.getAttribute("href")
+    );
+
+    requestAnimationFrame(() => {
+      if (!target) return;
+
+      const offset =
+        (document.querySelector("header")?.offsetHeight || 0) +
+        (document.getElementById("catnav")?.offsetHeight || 0);
+
+      target.style.scrollMarginTop = (offset + 16) + "px";
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+  });
+});
+</script>
+  
+    
+    
+    
+      
+      
+    
+
+
   <div><b>Fast & Safe Shipping</b><small>Carefully packed for delivery</small></div>
   <div><b>Quality Items</b><small>Clear photos and descriptions</small></div>
   <div><b>Secure Checkout</b><small>Pay securely with PayPal</small></div>
