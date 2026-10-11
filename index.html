@@ -375,7 +375,10 @@ paypal-add-to-cart-button{order:5;}
     width:100%;
     margin:2px 0 4px;
   }
-
+[id^="paypal-form-fields-container-"] #price-label,
+[id^="paypal-form-fields-container-"] #desc-label{
+  display:none !important;
+}
  .product-benefits{
   grid-template-columns:repeat(3,1fr);
   gap:6px;
@@ -721,7 +724,9 @@ function productCard(p){
 
   
 
+<div class="paypal-area">
   ${pay}
+</div>  
 
   <div class="product-benefits">
     <div>
