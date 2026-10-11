@@ -1294,7 +1294,17 @@ renderCatalog();
 
     mainPage.style.display = "none";
     detail.classList.add("show");
-    
+    requestAnimationFrame(() => {
+  const offset =
+    (document.querySelector("header")?.offsetHeight || 0) +
+    (document.getElementById("catnav")?.offsetHeight || 0);
+
+  window.scrollTo({
+    top: Math.max(0,
+      detail.getBoundingClientRect().top + window.scrollY - offset),
+    behavior: "instant"
+  });
+});
 
     detail.querySelector(".ocg-back").onclick = () => {
       detail.classList.remove("show");
