@@ -920,24 +920,64 @@ function renderNav(){
 }
 
 function renderCatalog(query=""){
-  const q=query.trim().toLowerCase();
-  document.getElementById("catalog").innerHTML = categories.map(c=>{
-    const cat=c[0];
-    const items=products.filter(p=>{
-      if(p.category!==cat) return false;
-      if(!q) return true;
-      return (`${p.title||""} ${p.subtitle||""} ${p.category||""}`).toLowerCase().includes(q);
+  const catalog = document.getElementById("catalog");
+  const cache = renderCatalog.cards ||
+    (renderCatalog.cards = new Map());
+
+  catalog.querySelectorAll("article.product").forEach(card => {
+    const title = card.querySelector("h3")?.textContent;
+    if (title) cache.set(title, card);
+  });
+
+  const q = query.trim().toLowerCase();
+
+  catalog.innerHTML = categories.map(c => {
+    const cat = c[0];
+    const items = products.filter(p => {
+      if (p.category !== cat) return false;
+      if (!q) return true;
+      return (`${p.title||""} ${p.subtitle||""} ${p.category||""}`)
+        .toLowerCase().includes(q);
     });
+
     return `
       <section class="category-section" id="${slug(cat)}">
         <div class="section-head">
-          <h2>${cat}</h2><span>${items.length} item${items.length===1?"":"s"}</span>
+          <h2>${cat}</h2>
+          <span>${items.length} item${items.length===1?"":"s"}</span>
         </div>
-        ${items.length ? `<div class="product-grid">${items.map(productCard).join("")}</div>` :
-        `<div class="empty">${q ? "No matching products in this category." : "No products listed in this category yet."}</div>`}
+        ${items.length
+          ? `<div class="product-grid">${items.map(productCard).join("")}</div>`
+          : `<div class="empty">${q
+              ? "No matching products in this category."
+              : "No products listed in this category yet."}</div>`}
       </section>`;
   }).join("");
+
+  catalog.querySelectorAll("article.product").forEach(card => {
+    const title = card.querySelector("h3")?.textContent;
+    const saved = cache.get(title);
+    if (saved) card.replaceWith(saved);
+    else if (title) cache.set(title, card);
+  });
 }
+  
+  
+    
+    
+      
+      
+      
+
+    
+      
+        
+          
+        
+        
+        `
+
+
 
 document.getElementById("searchInput").addEventListener("input", e=>renderCatalog(e.target.value));
 renderNav();
