@@ -1,0 +1,45 @@
+name: OCG iOS Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract app source
+        run: unzip -o OCG_iPhone_App_Source.zip -d app-source
+
+      - name: Install build tool
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: app-source/ios
+        run: xcodegen generate
+
+      - name: Build simulator app
+        working-directory: app-source/ios
+        run: >-
+          xcodebuild -project OCGMarketplace.xcodeproj
+          -scheme OCGMarketplace -sdk iphonesimulator
+          -configuration Debug -derivedDataPath build
+          CODE_SIGNING_ALLOWED=NO build
+
+      - name: Test app
+        working-directory: app-source/ios
+        run: |
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for group in d["devices"].values() for x in group if x["name"].startswith("iPhone")))')
+          xcodebuild -project OCGMarketplace.xcodeproj -scheme OCGMarketplace -destination "platform=iOS Simulator,id=$DEVICE_ID" -derivedDataPath build CODE_SIGNING_ALLOWED=NO test
+
+      - name: Save build
+        uses: actions/upload-artifact@v4
+        with:
+          name: OCG-simulator-build
+          path: app-source/ios/build/Build/Products/Debug-iphonesimulator/OCGMarketplace.app
+          if-no-files-found: error
