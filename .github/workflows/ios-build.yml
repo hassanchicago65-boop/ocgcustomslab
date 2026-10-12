@@ -1,28 +1,30 @@
 name: OCG iOS Build
-
 on:
   workflow_dispatch:
-
+    inputs:
+      upload_to_testflight:
+        description: Sign and upload to TestFlight using configured secrets
+        type: boolean
+        default: false
 permissions:
   contents: read
-
 jobs:
   build:
     runs-on: macos-15
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
+      - name: Select Xcode 26
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+          xcodebuild -version
       - name: Extract app source
         run: unzip -o OCG_iPhone_App_Source.zip -d app-source
-
       - name: Install build tool
         run: brew install xcodegen
-
       - name: Generate Xcode project
         working-directory: app-source/ios
         run: xcodegen generate
-
       - name: Build simulator app
         working-directory: app-source/ios
         run: >-
@@ -30,16 +32,85 @@ jobs:
           -scheme OCGMarketplace -sdk iphonesimulator
           -configuration Debug -derivedDataPath build
           CODE_SIGNING_ALLOWED=NO build
-
       - name: Test app
         working-directory: app-source/ios
         run: |
-          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for group in d["devices"].values() for x in group if x["name"].startswith("iPhone")))')
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for runtime,group in d["devices"].items() if "iOS-26" in runtime for x in group if x["name"].startswith("iPhone")))')
           xcodebuild -project OCGMarketplace.xcodeproj -scheme OCGMarketplace -destination "platform=iOS Simulator,id=$DEVICE_ID" -derivedDataPath build CODE_SIGNING_ALLOWED=NO test
-
-      - name: Save build
+      - name: Install signing credentials
+        if: inputs.upload_to_testflight
+        env:
+          DISTRIBUTION_P12: ${{ secrets.OCG_DISTRIBUTION_P12 }}
+          P12_PASSWORD: ${{ secrets.OCG_P12_PASSWORD }}
+          PROFILE: ${{ secrets.OCG_PROFILE }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          for key in DISTRIBUTION_P12 P12_PASSWORD PROFILE ASC_PRIVATE_KEY ASC_KEY_ID ASC_ISSUER_ID; do
+            if [ -z "${!key}" ]; then echo "::error::Missing signing secret: $key"; exit 1; fi
+          done
+          umask 077
+          printf '%s' "$DISTRIBUTION_P12" | base64 --decode > "$RUNNER_TEMP/distribution.p12"
+          printf '%s' "$PROFILE" | base64 --decode > "$RUNNER_TEMP/profile.mobileprovision"
+          security cms -D -i "$RUNNER_TEMP/profile.mobileprovision" > "$RUNNER_TEMP/profile.plist"
+          PROFILE_UUID=$(python3 -c 'import plistlib,sys; p=plistlib.load(open(sys.argv[1],"rb")); assert p["TeamIdentifier"] == ["J4P53CTBDG"]; assert p["Entitlements"]["application-identifier"] == "J4P53CTBDG.com.ocgcustomslab.marketplace"; assert not p["Entitlements"].get("get-task-allow",False); assert "ProvisionedDevices" not in p; print(p["UUID"])' "$RUNNER_TEMP/profile.plist")
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$RUNNER_TEMP/profile.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          KEYCHAIN_PASSWORD=$(openssl rand -hex 24)
+          echo "::add-mask::$KEYCHAIN_PASSWORD"
+          KEYCHAIN_PATH="$RUNNER_TEMP/ocg-signing.keychain-db"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$RUNNER_TEMP/distribution.p12" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          echo "OCG_PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
+          echo "OCG_KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+          mkdir -p app-source/ios/private_keys
+          printf '%s' "$ASC_PRIVATE_KEY" > "app-source/ios/private_keys/AuthKey_$ASC_KEY_ID.p8"
+      - name: Archive device app
+        working-directory: app-source/ios
+        env:
+          UPLOAD: ${{ inputs.upload_to_testflight }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          SIGNING=(CODE_SIGNING_ALLOWED=NO)
+          if [ "$UPLOAD" = "true" ]; then
+            SIGNING=(CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Manual "CODE_SIGN_IDENTITY=Apple Distribution" "PROVISIONING_PROFILE_SPECIFIER=$OCG_PROFILE_UUID" "OTHER_CODE_SIGN_FLAGS=--keychain $OCG_KEYCHAIN_PATH")
+          fi
+          xcodebuild -project OCGMarketplace.xcodeproj -scheme OCGMarketplace -configuration Release -destination 'generic/platform=iOS' -archivePath build/OCGMarketplace.xcarchive CURRENT_PROJECT_VERSION="$BUILD_NUMBER" "${SIGNING[@]}" archive
+      - name: Export and upload to TestFlight
+        if: inputs.upload_to_testflight
+        working-directory: app-source/ios
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          python3 -c 'import os,plistlib; plistlib.dump({"method":"app-store-connect","teamID":"J4P53CTBDG","signingStyle":"manual","signingCertificate":"Apple Distribution","provisioningProfiles":{"com.ocgcustomslab.marketplace":os.environ["OCG_PROFILE_UUID"]},"destination":"export","manageAppVersionAndBuildNumber":False},open("build/ExportOptions.plist","wb"))'
+          xcodebuild -exportArchive -archivePath build/OCGMarketplace.xcarchive -exportPath build/export -exportOptionsPlist build/ExportOptions.plist
+          xcrun altool --upload-app -f build/export/OCGMarketplace.ipa --type ios --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+      - name: Save simulator build
         uses: actions/upload-artifact@v4
         with:
           name: OCG-simulator-build
           path: app-source/ios/build/Build/Products/Debug-iphonesimulator/OCGMarketplace.app
           if-no-files-found: error
+      - name: Save unsigned device archive
+        if: ${{ !inputs.upload_to_testflight }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: OCG-device-archive-unsigned
+          path: app-source/ios/build/OCGMarketplace.xcarchive
+          if-no-files-found: error
+      - name: Clean signing credentials
+        if: always()
+        run: |
+          if [ -n "${OCG_KEYCHAIN_PATH:-}" ]; then security delete-keychain "$OCG_KEYCHAIN_PATH"; fi
+          rm -f "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/profile.mobileprovision" "$RUNNER_TEMP/profile.plist"
+          rm -rf app-source/ios/private_keys
+          if [ -n "${OCG_PROFILE_UUID:-}" ]; then rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/$OCG_PROFILE_UUID.mobileprovision"; fi
