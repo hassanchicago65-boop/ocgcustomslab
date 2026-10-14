@@ -29,9 +29,13 @@ jobs:
       - name: Install build tool
         run: brew install xcodegen
 
-      - name: Generate Xcode project
+            - name: Generate Xcode project
         working-directory: app-source/ios
-        run: xcodegen generate
+        run: |
+          xcodegen generate
+          python3 -c 'import plistlib; p="Generated/Info.plist"; d=plistlib.load(open(p,"rb")); d["UISupportedInterfaceOrientations~ipad"]=["UIInterfaceOrientationPortrait","UIInterfaceOrientationPortraitUpsideDown","UIInterfaceOrientationLandscapeLeft","UIInterfaceOrientationLandscapeRight"]; plistlib.dump(d,open(p,"wb"))'
+        
+        
 
       - name: Build simulator app
         working-directory: app-source/ios
