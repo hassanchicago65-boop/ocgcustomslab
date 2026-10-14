@@ -29,7 +29,7 @@ jobs:
       - name: Install build tool
         run: brew install xcodegen
 
-            - name: Generate Xcode project
+      - name: Generate Xcode project
         working-directory: app-source/ios
         run: |
           xcodegen generate
