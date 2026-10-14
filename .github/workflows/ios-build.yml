@@ -1,4 +1,5 @@
 name: OCG iOS Build
+
 on:
   workflow_dispatch:
     inputs:
@@ -6,25 +7,32 @@ on:
         description: Sign and upload to TestFlight using configured secrets
         type: boolean
         default: false
+
 permissions:
   contents: read
+
 jobs:
   build:
     runs-on: macos-15
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
       - name: Select Xcode 26
         run: |
           sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
           xcodebuild -version
+
       - name: Extract app source
         run: unzip -o OCG_iPhone_App_Source.zip -d app-source
+
       - name: Install build tool
         run: brew install xcodegen
+
       - name: Generate Xcode project
         working-directory: app-source/ios
         run: xcodegen generate
+
       - name: Build simulator app
         working-directory: app-source/ios
         run: >-
@@ -32,17 +40,21 @@ jobs:
           -scheme OCGMarketplace -sdk iphonesimulator
           -configuration Debug -derivedDataPath build
           CODE_SIGNING_ALLOWED=NO build
+
       - name: Test app
+        if: ${{ !inputs.upload_to_testflight }}
+        timeout-minutes: 8
         working-directory: app-source/ios
         run: |
           DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for runtime,group in d["devices"].items() if "iOS-26" in runtime for x in group if x["name"].startswith("iPhone")))')
           xcodebuild -project OCGMarketplace.xcodeproj -scheme OCGMarketplace -destination "platform=iOS Simulator,id=$DEVICE_ID" -derivedDataPath build CODE_SIGNING_ALLOWED=NO test
+
       - name: Install signing credentials
         if: inputs.upload_to_testflight
         env:
           DISTRIBUTION_P12: ${{ secrets.OCG_DISTRIBUTION_P12 }}
           P12_PASSWORD: ${{ secrets.OCG_P12_PASSWORD }}
-          PROFILE: ${{ secrets.OCG_PROFILE }}
+          PROFILE: ${{ secrets.PROFILE }}
           ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -71,6 +83,7 @@ jobs:
           echo "OCG_KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           mkdir -p app-source/ios/private_keys
           printf '%s' "$ASC_PRIVATE_KEY" > "app-source/ios/private_keys/AuthKey_$ASC_KEY_ID.p8"
+
       - name: Archive device app
         working-directory: app-source/ios
         env:
@@ -83,6 +96,7 @@ jobs:
             SIGNING=(CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Manual "CODE_SIGN_IDENTITY=Apple Distribution" "PROVISIONING_PROFILE_SPECIFIER=$OCG_PROFILE_UUID" "OTHER_CODE_SIGN_FLAGS=--keychain $OCG_KEYCHAIN_PATH")
           fi
           xcodebuild -project OCGMarketplace.xcodeproj -scheme OCGMarketplace -configuration Release -destination 'generic/platform=iOS' -archivePath build/OCGMarketplace.xcarchive CURRENT_PROJECT_VERSION="$BUILD_NUMBER" "${SIGNING[@]}" archive
+
       - name: Export and upload to TestFlight
         if: inputs.upload_to_testflight
         working-directory: app-source/ios
@@ -94,12 +108,14 @@ jobs:
           python3 -c 'import os,plistlib; plistlib.dump({"method":"app-store-connect","teamID":"J4P53CTBDG","signingStyle":"manual","signingCertificate":"Apple Distribution","provisioningProfiles":{"com.ocgcustomslab.marketplace":os.environ["OCG_PROFILE_UUID"]},"destination":"export","manageAppVersionAndBuildNumber":False},open("build/ExportOptions.plist","wb"))'
           xcodebuild -exportArchive -archivePath build/OCGMarketplace.xcarchive -exportPath build/export -exportOptionsPlist build/ExportOptions.plist
           xcrun altool --upload-app -f build/export/OCGMarketplace.ipa --type ios --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+
       - name: Save simulator build
         uses: actions/upload-artifact@v4
         with:
           name: OCG-simulator-build
           path: app-source/ios/build/Build/Products/Debug-iphonesimulator/OCGMarketplace.app
           if-no-files-found: error
+
       - name: Save unsigned device archive
         if: ${{ !inputs.upload_to_testflight }}
         uses: actions/upload-artifact@v4
@@ -107,6 +123,7 @@ jobs:
           name: OCG-device-archive-unsigned
           path: app-source/ios/build/OCGMarketplace.xcarchive
           if-no-files-found: error
+
       - name: Clean signing credentials
         if: always()
         run: |
