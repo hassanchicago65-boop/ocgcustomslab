@@ -24,7 +24,7 @@ jobs:
           xcodebuild -version
 
       - name: Extract app source
-        run: unzip -o "OCG_iPhone_App_Source_Shipping_Fix 2.zip" -d app-source
+        run: unzip -o OCG_iPhone_App_Source_PayPal_Checkout.zip -d app-source
 
       - name: Install build tool
         run: brew install xcodegen
