@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>OCG Marketplace Checkout</title>
+<script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="XH23YHB3Y5QQG"></script>
+<style>body{font:16px Arial,sans-serif;background:#f2f1f6;color:#14213d;margin:0;padding:28px 18px}.box{max-width:560px;margin:10vh auto;background:#fff;border-radius:20px;padding:28px;box-shadow:0 8px 28px #14213d18}h1{margin-top:0}.muted{color:#737781;line-height:1.5}.warn{background:#fff7df;padding:14px;border-radius:12px}.status{margin:20px 0;color:#555}.paypal{min-height:50px}</style></head>
+<body><main class="box"><h1>OCG Marketplace checkout</h1><p class="muted">PayPal will show your cart and calculate the payment. Check item names and quantities before you pay.</p><div id="status" class="status">Preparing your PayPal cart…</div><div class="warn muted">Shipping and any applicable tax are confirmed by PayPal at checkout. If the cart looks wrong, do not pay; return to the app and check your cart.</div><p><a href="https://ocgcustomslab.com/#catalog">Return to OCG Marketplace</a></p><div class="paypal"><paypal-cart-button data-id="pp-view-cart"></paypal-cart-button></div></main>
+<script>
+(function(){
+  'use strict';
+  const allowed={
+    'alohi-gilman-slab':'VZSULZ8ZBVYLW',
+    'austria-1974-10-schilling':'RAHMDZF2PPXPL',
+    'royal-myanmar-teamix':'UAFS7A2YEZ2RN',
+    'paoh-traditional-headgear-moe-myint-zaw':'JBPWUNTBD23K2'
+  };
+  const status=document.getElementById('status');
+  const params=new URLSearchParams(location.search);
+  const raw=params.get('items')||'';
+  const entries=[];
+  for(const part of raw.split(',')){
+    if(!part) continue;
+    const match=/^([a-z0-9-]+):(\d{1,2})$/.exec(part);
+    if(!match || !allowed[match[1]]){status.textContent='This cart contains an item that cannot be checked out. Please return to the app.';return;}
+    const qty=Number(match[2]);
+    if(qty<1 || qty>99){status.textContent='Invalid quantity. Please return to the app and correct it.';return;}
+    entries.push({id:allowed[match[1]],qty});
+  }
+  if(!entries.length){status.textContent='No items were sent. Return to the app and try again.';return;}
+  let attempts=0;
+  function initialize(){
+    if(window.cartPaypal && typeof window.cartPaypal.AddToCart==='function' && typeof window.cartPaypal.Cart==='function'){
+      try{
+        for(const item of entries){for(let i=0;i<item.qty;i++) window.cartPaypal.AddToCart({id:item.id});}
+        window.cartPaypal.Cart({id:'pp-view-cart'});
+        status.textContent='PayPal cart opened. Confirm every item and quantity before paying.';
+      }catch(e){status.textContent='Could not open the PayPal cart. Please return to the app and try again.';}
+      return;
+    }
+    if(++attempts<100) setTimeout(initialize,150);
+    else status.textContent='PayPal did not load. Check your connection and refresh this page.';
+  }
+  initialize();
+})();
+</script></body></html>
