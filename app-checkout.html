@@ -29,7 +29,12 @@
   function initialize(){
     if(window.cartPaypal && typeof window.cartPaypal.AddToCart==='function' && typeof window.cartPaypal.Cart==='function'){
       try{
-        for(const item of entries){for(let i=0;i<item.qty;i++) window.cartPaypal.AddToCart({id:item.id});}
+        for (const item of entries) {
+  const button = document.createElement('paypal-add-to-cart-button');
+  button.setAttribute('data-id', item.id);
+  document.body.appendChild(button);
+  for (let i = 0; i < item.qty; i++) window.cartPaypal.AddToCart({ id: item.id });
+}
         window.cartPaypal.Cart({id:'pp-view-cart'});
         status.textContent='PayPal cart opened. Confirm every item and quantity before paying.';
       }catch(e){status.textContent='Could not open the PayPal cart. Please return to the app and try again.';}
