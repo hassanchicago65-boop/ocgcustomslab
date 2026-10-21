@@ -735,7 +735,7 @@ function productCard(p){
   <article class="product" id="item-${p.id}">
 
     <div class="product-top">
-
+${p.id !== "maggi-kari-curry-5-pack" ? `
             <div class="product-image">
         <img class="product-main" src="${p.image}" alt="${p.title}">
 
@@ -748,7 +748,7 @@ function productCard(p){
           </div>
         ` : ""}
       </div>
-        
+   ` : ""}     
 
         
           
