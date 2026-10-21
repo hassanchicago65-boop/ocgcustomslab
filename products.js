@@ -65,8 +65,9 @@ status: "For Sale"
   category: "Food & Beverages",
   title: "Maggi Kari Curry Instant Noodles 5-Pack",
   subtitle: "5 individual packets • Curry flavor",
-  image: "01-maggi-kari-edited.png",
-  image2: "02-maggi-kari-product-photo.jpeg",
+  image: "IMG_4337.png",
+image2: "IMG_4333.jpeg",
+  
   price: 5.50,
   shipping: 4.99,
   paypalCartId: "HM2CU8T4PH7SY",
