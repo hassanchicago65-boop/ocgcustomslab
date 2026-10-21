@@ -736,19 +736,30 @@ function productCard(p){
 
     <div class="product-top">
 
-      <div class="product-image">
+            <div class="product-image">
         <img class="product-main" src="${p.image}" alt="${p.title}">
 
-        ${p.image2 ? `
+        ${[p.image, p.image2, p.image3, p.image4, p.image5].filter(Boolean).length > 1 ? `
           <div class="product-thumbs">
-            <img src="${p.image}"
-              onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
-
-            <img src="${p.image2}"
-              onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">
+            ${[p.image, p.image2, p.image3, p.image4, p.image5]
+              .filter(Boolean)
+              .map(src => `<img src="${src}" onclick="this.closest('.product-image').querySelector('.product-main').src=this.src">`)
+              .join("")}
           </div>
         ` : ""}
       </div>
+        
+
+        
+          
+            
+              
+
+            
+              
+          
+        
+      
 
       <div class="product-body">
 
