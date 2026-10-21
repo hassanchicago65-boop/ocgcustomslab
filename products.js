@@ -69,7 +69,8 @@ status: "For Sale"
   image2: "02-maggi-kari-product-photo.jpeg",
   price: 5.50,
   shipping: 4.99,
-  status: "For Sale"
+  paypalCartId: "HM2CU8T4PH7SY",
+status: "For Sale"
 }  
 ];
 
