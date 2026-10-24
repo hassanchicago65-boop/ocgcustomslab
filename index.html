@@ -993,9 +993,34 @@ function renderCatalog(query=""){
 document.getElementById("searchInput").addEventListener("input", e=>renderCatalog(e.target.value));
 renderNav();
 renderCatalog();
-   products
+products
   .filter(p => p.paypalCartId)
   .forEach(p => cartPaypal.AddToCart({ id: p.paypalCartId }));
+
+// Load the shared catalog used by the iPhone app; keep the embedded catalog as an offline fallback.
+fetch("/catalog-api/catalog", { headers: { "Accept": "application/json" }, cache: "no-store" })
+  .then(response => response.ok ? response.json() : null)
+  .then(sharedCatalog => {
+    if (!Array.isArray(sharedCatalog) || !sharedCatalog.length) return;
+    const freshProducts = sharedCatalog.map(item => {
+      const images = Array.isArray(item.images) ? item.images.filter(Boolean).slice(0, 5) : [];
+      return {
+        ...item,
+        image: images[0] || item.image || "",
+        image2: images[1] || "",
+        image3: images[2] || "",
+        image4: images[3] || "",
+        image5: images[4] || ""
+      };
+    });
+    products.splice(0, products.length, ...freshProducts);
+    if (renderCatalog.cards) renderCatalog.cards.clear();
+    renderNav();
+    renderCatalog(document.getElementById("searchInput")?.value || "");
+    freshProducts.filter(p => p.paypalCartId)
+      .forEach(p => cartPaypal.AddToCart({ id: p.paypalCartId }));
+  })
+  .catch(() => {});
   
 
     
