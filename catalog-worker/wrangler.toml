@@ -1,0 +1,28 @@
+name = "ocg-catalog-api"
+main = "worker.js"
+compatibility_date = "2026-10-23"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ocg-catalog"
+database_id = "SET_AFTER_CREATING_D1_DATABASE"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "ocg-catalog-images"
+
+[[routes]]
+pattern = "ocgcustomslab.com/catalog.json"
+zone_name = "ocgcustomslab.com"
+
+[[routes]]
+pattern = "ocgcustomslab.com/catalog-api/*"
+zone_name = "ocgcustomslab.com"
+
+[[routes]]
+pattern = "ocgcustomslab.com/catalog-images/*"
+zone_name = "ocgcustomslab.com"
+
+[vars]
+ALLOWED_ORIGIN = "https://ocgcustomslab.com"
