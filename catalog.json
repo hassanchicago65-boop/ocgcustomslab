@@ -44,5 +44,19 @@
     ],
     "price": 1550,
     "shipping": 0
+  },
+  {
+    "id": "maggi-kari-curry-5-pack",
+    "category": "Food & Beverages",
+    "title": "Maggi Kari Curry Instant Noodles 5-Pack",
+    "subtitle": "5 individual packets • Curry flavor",
+    "images": [
+      "https://ocgcustomslab.com/IMG_4337.png",
+      "https://ocgcustomslab.com/IMG_4333.jpeg"
+    ],
+    "price": 5.5,
+    "shipping": 4.99,
+    "quantity": 100,
+    "paypalCartId": "HM2CU8T4PH7SY"
   }
 ]

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>OCG Marketplace · Product Manager</title>
+  <style>
+    :root{--navy:#061b33;--gold:#d7aa4f;--ink:#142033;--muted:#667085;--line:#dfe3e9;--paper:#f5f7fa;--red:#b42318;--green:#18794e}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px Arial,Helvetica,sans-serif}
+    header{background:var(--navy);color:#fff;padding:18px max(18px,calc((100% - 1000px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px}
+    header strong{font:700 20px Georgia,serif;letter-spacing:.02em}header span{color:#dce4ef;font-size:13px}
+    main{max-width:1000px;margin:24px auto;padding:0 16px 50px}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 4px 18px #061b3308}
+    h1{font-size:27px;margin:0 0 7px}h2{font-size:20px;margin:0 0 16px}.muted{color:var(--muted);line-height:1.5;margin:0 0 18px}
+    label{display:block;font-weight:700;font-size:14px;margin:15px 0 7px}input,textarea,select{width:100%;min-height:48px;border:1px solid #bfc7d2;border-radius:10px;padding:11px 13px;font:16px Arial;background:#fff;color:var(--ink)}textarea{min-height:105px;resize:vertical}input[type=file]{padding:10px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.hint{font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.45}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}button{min-height:46px;padding:0 18px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:700 15px Arial;cursor:pointer}button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button.warn{color:var(--red)}button:disabled{opacity:.55;cursor:wait}
+    #notice{display:none;padding:12px 14px;border-radius:10px;margin-top:14px;line-height:1.45}#notice.show{display:block}#notice.error{background:#fef3f2;color:#912018}#notice.ok{background:#ecfdf3;color:#12623d}#notice.info{background:#eef4ff;color:#214a8a}
+    .listing{display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--line)}.listing img{width:76px;height:76px;object-fit:cover;border-radius:9px;background:#eef1f5}.listing b{display:block;margin-bottom:5px}.listing small{color:var(--muted);line-height:1.4}.listing .actions{margin:0;justify-content:flex-end}.badge{display:inline-block;background:#f0e7d2;color:#72551b;border-radius:99px;padding:4px 8px;font-size:12px;font-weight:700;margin-top:5px}
+    .toprow{display:flex;justify-content:space-between;align-items:center;gap:12px}.hidden{display:none!important}.secure{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.secure input{max-width:320px}
+    @media(max-width:620px){header{align-items:flex-start;flex-direction:column}.panel{padding:17px}.grid{grid-template-columns:1fr}.toprow{align-items:flex-start;flex-direction:column}.listing{grid-template-columns:58px 1fr}.listing img{width:58px;height:58px}.listing .actions{grid-column:1/-1;justify-content:flex-start}}
+  </style>
+</head>
+<body>
+  <header><strong>OCG MARKETPLACE</strong><span>Private product manager</span></header>
+  <main>
+    <section class="panel">
+      <h1>Product Manager</h1>
+      <p class="muted">Add a listing once. It will appear in the website catalog and refresh into the OCG iPhone app.</p>
+      <div id="signedOut" class="secure">
+        <label for="adminKey" style="margin:0">Admin key</label>
+        <input id="adminKey" type="password" autocomplete="current-password" placeholder="Enter your private admin key">
+        <button class="primary" id="signIn">Sign in</button>
+      </div>
+      <div id="signedIn" class="toprow hidden"><span>Signed in to product management</span><button id="signOut">Sign out</button></div>
+      <div id="notice" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="formPanel" class="panel hidden">
+      <h2 id="formHeading">Add a product</h2>
+      <form id="productForm">
+        <div class="grid">
+          <div><label for="title">Item title *</label><input id="title" required maxlength="140" placeholder="Example: 1974 Austria 10 Schilling Coin"></div>
+          <div><label for="category">Category *</label><select id="category" required>
+            <option>Trading Cards</option><option>Coins</option><option>Art &amp; Paintings</option><option>Ceramics &amp; Pottery</option><option>Vintage &amp; Collectibles</option><option>Home &amp; Lifestyle</option><option>Food &amp; Beverages</option><option>Other</option>
+          </select></div>
+        </div>
+        <label for="description">Description</label><textarea id="description" maxlength="2048" placeholder="Condition, size, contents, and other helpful details"></textarea>
+        <label for="photos">Photos *</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple>
+        <p class="hint" id="photoHint">Choose 1–5 clear photos. JPG, PNG, WebP, or AVIF; up to 8 MB each. Leave empty when editing to keep the current photos.</p>
+        <div class="grid">
+          <div><label for="price">Price (USD) *</label><input id="price" required type="number" min="0" step="0.01" placeholder="0.00"></div>
+          <div><label for="shipping">Shipping fee (USD) *</label><input id="shipping" required type="number" min="0" step="0.01" placeholder="4.99"></div>
+          <div><label for="quantity">Quantity in stock</label><input id="quantity" type="number" min="0" step="1" placeholder="Leave empty if not tracked"></div>
+          <div><label for="status">Listing status</label><select id="status"><option>For Sale</option><option>Draft</option><option>Archived</option></select></div>
+        </div>
+        <label for="paypalCartId">PayPal Add to Cart button ID</label><input id="paypalCartId" maxlength="80" placeholder="Paste the PayPal button ID">
+        <p class="hint">If this is blank, the listing can be saved as a draft. Add the PayPal ID before setting it to “For Sale” so buyers can pay.</p>
+        <label for="paypal">PayPal payment link (optional)</label><input id="paypal" type="url" placeholder="https://www.paypal.com/ncp/payment/...">
+        <div class="actions"><button class="primary" id="saveProduct" type="submit">Save product</button><button id="cancelEdit" class="hidden" type="button">Cancel edit</button></div>
+      </form>
+    </section>
+
+    <section id="listPanel" class="panel hidden">
+      <div class="toprow"><h2 style="margin:0">Your products</h2><button id="reloadList">Refresh list</button></div>
+      <div id="productList" style="margin-top:14px"></div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      let adminKey = "";
+      let editing = null;
+      let products = [];
+      const api = "/catalog-api";
+      const message = (text, kind="info") => { const n=$("notice"); n.textContent=text; n.className=`show ${kind}`; };
+      const clearMessage = () => { $("notice").className=""; };
+      async function request(path, options={}) {
+        const headers = new Headers(options.headers || {});
+        if (adminKey) headers.set("Authorization", `Bearer ${adminKey}`);
+        const res = await fetch(`${api}${path}`, {...options, headers});
+        let body = {};
+        try { body = await res.json(); } catch {}
+        if (!res.ok) throw new Error(body.error || `Request failed (${res.status}).`);
+        return body;
+      }
+      function signedIn(on) {
+        $("signedOut").classList.toggle("hidden", on);
+        $("signedIn").classList.toggle("hidden", !on);
+        $("formPanel").classList.toggle("hidden", !on);
+        $("listPanel").classList.toggle("hidden", !on);
+      }
+      async function refresh() {
+        try { products=(await request("/admin/products")).products || []; renderList(); }
+        catch (error) { if (/key|sign in/i.test(error.message)) { adminKey=""; signedIn(false); } message(error.message,"error"); }
+      }
+      function renderList() {
+        const root=$("productList");
+        if (!products.length) { root.innerHTML='<p class="muted">No products have been saved yet.</p>'; return; }
+        root.innerHTML=products.map(p=>`<article class="listing" data-id="${escapeHTML(p.id)}"><img src="${escapeHTML(p.images?.[0]||"")}" alt=""><div><b>${escapeHTML(p.title)}</b><small>${escapeHTML(p.category)} · $${Number(p.price).toFixed(2)} · Shipping $${Number(p.shipping).toFixed(2)}${p.quantity==null?"":` · Stock ${p.quantity}`}</small><br><span class="badge">${escapeHTML(p.status)}</span></div><div class="actions"><button data-action="edit">Edit</button><button data-action="archive" class="warn">${p.status==="Archived"?"Restore":"Archive"}</button></div></article>`).join("");
+      }
+      function escapeHTML(value) { return String(value ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+      function resetForm() {
+        editing=null; $("productForm").reset(); $("formHeading").textContent="Add a product"; $("saveProduct").textContent="Save product"; $("cancelEdit").classList.add("hidden"); $("photos").required=true; $("photoHint").textContent="Choose 1–5 clear photos. JPG, PNG, WebP, or AVIF; up to 8 MB each.";
+      }
+      function editProduct(p) {
+        editing=p.id; $("formHeading").textContent="Edit product"; $("saveProduct").textContent="Save changes"; $("cancelEdit").classList.remove("hidden"); $("photos").required=false; $("photoHint").textContent=`Current photos: ${p.images.length}. Choose new photos to replace them, or leave empty to keep them.`;
+        $("title").value=p.title; $("category").value=p.category; $("description").value=p.subtitle||""; $("price").value=p.price; $("shipping").value=p.shipping; $("quantity").value=p.quantity??""; $("status").value=p.status; $("paypalCartId").value=p.paypalCartId||""; $("paypal").value=p.paypal||"";
+        $("formPanel").scrollIntoView({behavior:"smooth",block:"start"});
+      }
+      $("signIn").addEventListener("click", async()=>{
+        clearMessage(); adminKey=$("adminKey").value.trim(); if(!adminKey){message("Enter your admin key.","error");return;}
+        try { await refresh(); if(adminKey){signedIn(true);message("Product manager is ready.","ok");} }
+        catch(error){message(error.message,"error");}
+      });
+      $("signOut").addEventListener("click",()=>{adminKey="";$("adminKey").value="";signedIn(false);resetForm();clearMessage();});
+      $("reloadList").addEventListener("click",refresh);
+      $("cancelEdit").addEventListener("click",resetForm);
+      $("productList").addEventListener("click",async event=>{
+        const button=event.target.closest("button[data-action]"); if(!button)return;
+        const row=button.closest("[data-id]"); const p=products.find(item=>item.id===row.dataset.id); if(!p)return;
+        if(button.dataset.action==="edit"){editProduct(p);return;}
+        const status=p.status==="Archived"?"For Sale":"Archived";
+        try { await request(`/admin/products/${encodeURIComponent(p.id)}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({...p,status})}); message(status==="Archived"?"Listing archived.":"Listing restored.","ok"); await refresh(); }
+        catch(error){message(error.message,"error");}
+      });
+      $("productForm").addEventListener("submit",async event=>{
+        event.preventDefault(); clearMessage(); const button=$("saveProduct"); button.disabled=true;
+        try {
+          let images=editing?products.find(p=>p.id===editing).images:[];
+          const files=[...$("photos").files];
+          if(files.length){ if(files.length>5)throw new Error("Choose no more than 5 photos."); const data=new FormData(); files.forEach(file=>data.append("photos",file)); images=(await request("/images",{method:"POST",body:data})).images; }
+          if(!images.length)throw new Error("Choose at least 1 product photo.");
+          const quantity=$("quantity").value.trim();
+          const payload={category:$("category").value,title:$("title").value.trim(),subtitle:$("description").value.trim(),images,price:Number($("price").value),shipping:Number($("shipping").value),quantity:quantity===""?null:Number(quantity),paypalCartId:$("paypalCartId").value.trim(),paypal:$("paypal").value.trim(),status:$("status").value};
+          if(payload.status==="For Sale"&&!payload.paypalCartId&&!payload.paypal)throw new Error("Add a PayPal button ID or payment link before listing this item for sale.");
+          const path=editing?`/admin/products/${encodeURIComponent(editing)}`:"/admin/products";
+          await request(path,{method:editing?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+          message(editing?"Product updated.":"Product added. It will appear on the website and in the app after the catalog refreshes.","ok"); resetForm(); await refresh();
+        } catch(error){message(error.message,"error");}
+        finally{button.disabled=false;}
+      });
+    })();
+  </script>
+</body>
+</html>
