@@ -1013,7 +1013,7 @@ fetch("https://ocg-catalog-api.hassanchicago65.workers.dev/catalog-api/catalog",
         image5: images[4] || ""
       };
     });
-    products.splice(0, products.length, ...freshProducts);
+    
     const mergedProducts = [...products];
 const indexById = new Map(mergedProducts.map((item, index) => [item.id || item.title, index]));
 freshProducts.forEach(item => {
