@@ -998,7 +998,7 @@ products
   .forEach(p => cartPaypal.AddToCart({ id: p.paypalCartId }));
 
 // Load the shared catalog used by the iPhone app; keep the embedded catalog as an offline fallback.
-fetch("/catalog-api/catalog", { headers: { "Accept": "application/json" }, cache: "no-store" })
+fetch("https://ocg-catalog-api.hassanchicago65.workers.dev/catalog-api/catalog", { headers: { "Accept": "application/json" }, cache: "no-store" })
   .then(response => response.ok ? response.json() : null)
   .then(sharedCatalog => {
     if (!Array.isArray(sharedCatalog) || !sharedCatalog.length) return;
@@ -1014,7 +1014,19 @@ fetch("/catalog-api/catalog", { headers: { "Accept": "application/json" }, cache
       };
     });
     products.splice(0, products.length, ...freshProducts);
-    if (renderCatalog.cards) renderCatalog.cards.clear();
+    const mergedProducts = [...products];
+const indexById = new Map(mergedProducts.map((item, index) => [item.id || item.title, index]));
+freshProducts.forEach(item => {
+  const key = item.id || item.title;
+  if (indexById.has(key)) {
+    const index = indexById.get(key);
+    mergedProducts[index] = { ...mergedProducts[index], ...item };
+  } else {
+    indexById.set(key, mergedProducts.length);
+    mergedProducts.push(item);
+  }
+});
+products.splice(0, products.length, ...mergedProducts);
     renderNav();
     renderCatalog(document.getElementById("searchInput")?.value || "");
     freshProducts.filter(p => p.paypalCartId)
