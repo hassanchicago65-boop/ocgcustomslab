@@ -998,7 +998,7 @@ products
   .forEach(p => cartPaypal.AddToCart({ id: p.paypalCartId }));
 
 // Load the shared catalog used by the iPhone app; keep the embedded catalog as an offline fallback.
-fetch("https://ocg-catalog-api.hassanchicago65.workers.dev/catalog-api/catalog", { headers: { "Accept": "application/json" }, cache: "no-store" })
+fetch("/catalog-api/catalog", { headers: { "Accept": "application/json" }, cache: "no-store" })
   .then(response => response.ok ? response.json() : null)
   .then(sharedCatalog => {
     if (!Array.isArray(sharedCatalog) || !sharedCatalog.length) return;
