@@ -1,6 +1,8 @@
 const CATEGORIES = new Set([
-  "Trading Cards", "Coins", "Art & Paintings", "Ceramics & Pottery",
-  "Vintage & Collectibles", "Home & Lifestyle", "Food & Beverages", "Other"
+   "Trading Cards", "Coins", "Art & Paintings", "Ceramics & Pottery",
+  "Vintage & Collectibles", "Home & Lifestyle", "Clothing & Accessories", "Electronics",
+  "Food & Beverages", "Other" 
+   
 ]);
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
