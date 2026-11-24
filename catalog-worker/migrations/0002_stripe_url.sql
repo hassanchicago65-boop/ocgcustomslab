@@ -1,0 +1,2 @@
+ALTER TABLE products
+ADD COLUMN stripe_url TEXT NOT NULL DEFAULT '';
