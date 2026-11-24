@@ -44,8 +44,8 @@ function rowToProduct(row) {
     price: Number(row.price),
     shipping: Number(row.shipping || 0),
     quantity: row.quantity == null ? null : Number(row.quantity),
-    paypalCartId: row.paypal_cart_id || "",
-    paypal: row.paypal_url || "",
+    stripeUrl: row.stripe_url || "",
+    
     status: row.status
   };
 }
@@ -75,8 +75,8 @@ function validProduct(input) {
   if (!Number.isFinite(input.price) || input.price < 0 || input.price > 1000000) return "Enter a valid item price.";
   if (!Number.isFinite(input.shipping) || input.shipping < 0 || input.shipping > 100000) return "Enter a valid shipping fee.";
   if (input.quantity !== null && (!Number.isInteger(input.quantity) || input.quantity < 0 || input.quantity > 1000000)) return "Enter a whole-number stock quantity.";
-  if (typeof input.paypalCartId !== "string" || input.paypalCartId.length > 80) return "Check the PayPal cart button ID.";
-  if (typeof input.paypal !== "string" || (input.paypal && !input.paypal.startsWith("https://www.paypal.com/"))) return "PayPal link must begin with https://www.paypal.com/.";
+    if (typeof input.stripeUrl !== "string" || (input.stripeUrl && !input.stripeUrl.startsWith("https://buy.stripe.com/"))) return "Enter a valid Stripe payment link.";
+   
   if (!["For Sale", "Draft", "Archived"].includes(input.status)) return "Choose a valid listing status.";
   return "";
 }
