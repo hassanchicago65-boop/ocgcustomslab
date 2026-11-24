@@ -53,9 +53,13 @@
           <div><label for="quantity">Quantity in stock</label><input id="quantity" type="number" min="0" step="1" placeholder="Leave empty if not tracked"></div>
           <div><label for="status">Listing status</label><select id="status"><option>For Sale</option><option>Draft</option><option>Archived</option></select></div>
         </div>
-        <label for="paypalCartId">PayPal Add to Cart button ID</label><input id="paypalCartId" maxlength="80" placeholder="Paste the PayPal button ID">
-        <p class="hint">If this is blank, the listing can be saved as a draft. Add the PayPal ID before setting it to “For Sale” so buyers can pay.</p>
-        <label for="paypal">PayPal payment link (optional)</label><input id="paypal" type="url" placeholder="https://www.paypal.com/ncp/payment/...">
+       <label for="stripeUrl">Stripe payment link</label>
+<input id="stripeUrl" type="url" placeholder="https://buy.stripe.com/...">
+<p class="hint">Paste this item's Stripe Payment Link. Buyers will pay securely through Stripe.</p>
+<input id="paypalCartId" type="hidden">
+<input id="paypal" type="hidden"> 
+        
+        
         <div class="actions"><button class="primary" id="saveProduct" type="submit">Save product</button><button id="cancelEdit" class="hidden" type="button">Cancel edit</button></div>
       </form>
     </section>
@@ -104,7 +108,7 @@
       }
       function editProduct(p) {
         editing=p.id; $("formHeading").textContent="Edit product"; $("saveProduct").textContent="Save changes"; $("cancelEdit").classList.remove("hidden"); $("photos").required=false; $("photoHint").textContent=`Current photos: ${p.images.length}. Choose new photos to replace them, or leave empty to keep them.`;
-        $("title").value=p.title; $("category").value=p.category; $("description").value=p.subtitle||""; $("price").value=p.price; $("shipping").value=p.shipping; $("quantity").value=p.quantity??""; $("status").value=p.status; $("paypalCartId").value=p.paypalCartId||""; $("paypal").value=p.paypal||"";
+      $("title").value=p.title; $("category").value=p.category; $("description").value=p.subtitle||""; $("price").value=p.price; $("shipping").value=p.shipping; $("quantity").value=p.quantity??""; $("status").value=p.status; $("paypalCartId").value=p.paypalCartId||""; $("paypal").value=p.paypal||""; $("stripeUrl").value=p.stripeUrl||"";  
         $("formPanel").scrollIntoView({behavior:"smooth",block:"start"});
       }
       $("signIn").addEventListener("click", async()=>{
@@ -129,10 +133,10 @@
           let images=editing?products.find(p=>p.id===editing).images:[];
           const files=[...$("photos").files];
           if(files.length){ if(files.length>5)throw new Error("Choose no more than 5 photos."); const data=new FormData(); files.forEach(file=>data.append("photos",file)); images=(await request("/images",{method:"POST",body:data})).images; }
-          if(!images.length)throw new Error("Choose at least 1 product photo.");
-          const quantity=$("quantity").value.trim();
-          const payload={category:$("category").value,title:$("title").value.trim(),subtitle:$("description").value.trim(),images,price:Number($("price").value),shipping:Number($("shipping").value),quantity:quantity===""?null:Number(quantity),paypalCartId:$("paypalCartId").value.trim(),paypal:$("paypal").value.trim(),status:$("status").value};
-          if(payload.status==="For Sale"&&!payload.paypalCartId&&!payload.paypal)throw new Error("Add a PayPal button ID or payment link before listing this item for sale.");
+          const payload={category:$("category").value,title:$("title").value.trim(),subtitle:$("description").value.trim(),images,price:Number($("price").value),shipping:Number($("shipping").value),quantity:quantity===""?null:Number(quantity),stripeUrl:$("stripeUrl").value.trim(),paypalCartId:$("paypalCartId").value.trim(),paypal:$("paypal").value.trim(),status:$("status").value};
+          if(payload.status==="For Sale"&&!payload.stripeUrl)throw new Error("Add a Stripe payment link before listing this item for sale."); if(payload.stripeUrl&&!payload.stripeUrl.startsWith("https://buy.stripe.com/"))throw new Error("Use a Stripe link beginning with https://buy.stripe.com/");
+          
+          
           const path=editing?`/admin/products/${encodeURIComponent(editing)}`:"/admin/products";
           await request(path,{method:editing?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
           message(editing?"Product updated.":"Product added. It will appear on the website and in the app after the catalog refreshes.","ok"); resetForm(); await refresh();
