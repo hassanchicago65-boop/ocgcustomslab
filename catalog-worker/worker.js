@@ -106,13 +106,13 @@ async function saveProduct(request, env, headers, id = "") {
   const issue = validProduct(input);
   if (issue) return response({ error: issue }, 400, headers);
   const productId = id || makeId(input.title);
-  const values = [productId, input.category, input.title.trim(), input.subtitle.trim(), JSON.stringify(input.images), input.price, input.shipping, input.quantity, input.paypalCartId.trim(), input.paypal.trim(), input.status];
+ const values = [productId, input.category, input.title.trim(), input.subtitle.trim(), JSON.stringify(input.images), input.price, input.shipping, input.quantity, input.paypalCartId.trim(), input.paypal.trim(), input.stripeUrl.trim(), input.status]; 
   if (id) {
-    const result = await env.DB.prepare(`UPDATE products SET category=?,title=?,subtitle=?,images_json=?,price=?,shipping=?,quantity=?,paypal_cart_id=?,paypal_url=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`)
+UPDATE products SET category=?,title=?,subtitle=?,images_json=?,price=?,shipping=?,quantity=?,paypal_cart_id=?,paypal_url=?,stripe_url=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?    
       .bind(...values.slice(1), id).run();
     if (!result.meta?.changes) return response({ error: "This listing could not be found." }, 404, headers);
   } else {
-    await env.DB.prepare(`INSERT INTO products (id,category,title,subtitle,images_json,price,shipping,quantity,paypal_cart_id,paypal_url,status) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+  INSERT INTO products (id,category,title,subtitle,images_json,price,shipping,quantity,paypal_cart_id,paypal_url,stripe_url,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)  
       .bind(...values).run();
   }
   const row = await env.DB.prepare("SELECT * FROM products WHERE id=?").bind(productId).first();
