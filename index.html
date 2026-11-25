@@ -513,10 +513,10 @@ paypal-add-to-cart-button{order:5;}
     <a href="#returns">Returns</a>
   </div>
 </header>
-<paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
-<script>
-  cartPaypal.Cart({ id: "pp-view-cart" })
-</script>
+
+
+  
+
 <nav class="catnav" id="catnav"></nav>
 
 <section class="hero" id="top"
@@ -1698,7 +1698,7 @@ document.head.appendChild(mobileProductFix);
 
       const box = document.createElement("div");
       box.innerHTML = `
-        <input type="number" min="1" value="1" style="width:70px;padding:10px">
+     <input type="number" min="1" value="1" style="width:80px;padding:12px;background:#fff4c2;border:2px solid #d7aa4f;border-radius:10px;color:#061b33;font-size:18px;font-weight:bold">   
         <button type="button" data-add-cart="${id}">Add to Cart</button>`;
       place.after(box);
     });
