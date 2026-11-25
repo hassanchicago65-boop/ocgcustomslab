@@ -118,7 +118,88 @@ const result = await env.DB.prepare("UPDATE products SET category=?,title=?,subt
   const row = await env.DB.prepare("SELECT * FROM products WHERE id=?").bind(productId).first();
   return response({ product: rowToProduct(row) }, id ? 200 : 201, headers);
 }
+async function createStripeCheckout(request, env, headers) {
+  const secret = env.STRIPE_SECRET_KEY || env.STRIPE_SECRET;
+  if (!secret) {
+    return response({ error: "Worker secret STRIPE_SECRET_KEY is missing." }, 503, headers);
+  }
 
+  let input;
+  try {
+    input = await request.json();
+  } catch {
+    return response({ error: "Cart data is invalid." }, 400, headers);
+  }
+
+  if (!Array.isArray(input.items) || input.items.length < 1) {
+    return response({ error: "Your cart is empty." }, 400, headers);
+  }
+
+  const form = new URLSearchParams();
+  form.set("mode", "payment");
+  form.set("success_url", "https://ocgcustomslab.com/?checkout=success");
+  form.set("cancel_url", "https://ocgcustomslab.com/?checkout=cancelled");
+  form.set("automatic_tax[enabled]", "true");
+  form.set("shipping_address_collection[allowed_countries][0]", "US");
+
+  let line = 0;
+
+  for (const item of input.items) {
+    if (
+      typeof item.id !== "string" ||
+      !Number.isInteger(item.quantity) ||
+      item.quantity < 1
+    ) {
+      return response({ error: "Invalid item quantity." }, 400, headers);
+    }
+
+    const p = await env.DB.prepare(
+      "SELECT id,title,price,shipping,quantity,status FROM products WHERE id=?"
+    ).bind(item.id).first();
+
+    if (!p || p.status !== "For Sale") {
+      return response({ error: "An item is no longer for sale." }, 409, headers);
+    }
+
+    if (p.quantity != null && item.quantity > Number(p.quantity)) {
+      return response({
+        error: `${p.title} has only ${p.quantity} in stock.`
+      }, 409, headers);
+    }
+
+    const addLine = (name, cents, qty) => {
+      form.set(`line_items[${line}][price_data][currency]`, "usd");
+      form.set(`line_items[${line}][price_data][unit_amount]`, String(cents));
+      form.set(`line_items[${line}][price_data][product_data][name]`, name);
+      form.set(`line_items[${line}][quantity]`, String(qty));
+      line++;
+    };
+
+    addLine(p.title, Math.round(Number(p.price) * 100), item.quantity);
+
+    const shipping = Math.round(Number(p.shipping || 0) * 100);
+    if (shipping > 0) addLine(p.title + " shipping", shipping, 1);
+  }
+
+  const stripe = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${secret}`,
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: form
+  });
+
+  const result = await stripe.json();
+
+  if (!stripe.ok || !result.url) {
+    return response({
+      error: result.error?.message || "Stripe checkout could not start."
+    }, 502, headers);
+  }
+
+  return response({ url: result.url }, 200, headers);
+}
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
