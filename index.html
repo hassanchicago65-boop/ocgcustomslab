@@ -1638,6 +1638,128 @@ mobileProductFix.textContent = `
 document.head.appendChild(mobileProductFix);
 })();
 </script>
+ <script>
+(() => {
+  const cartKey = "ocg-cart";
+  let cart = {};
+  try { cart = JSON.parse(localStorage.getItem(cartKey) || "{}"); } catch {}
+
+  const getProduct = id => products.find(p => String(p.id) === String(id));
+  const money = n => "$" + Number(n || 0).toFixed(2);
+  const save = () => localStorage.setItem(cartKey, JSON.stringify(cart));
+
+  const button = document.createElement("button");
+  button.id = "ocgCartButton";
+  button.textContent = "🛒 Cart";
+  button.style.cssText =
+    "position:fixed;right:16px;bottom:90px;z-index:9999;padding:14px;background:#ffd43b;border:0;border-radius:12px;font-weight:bold;font-size:17px";
+
+  const panel = document.createElement("div");
+  panel.id = "ocgCartPanel";
+  panel.style.cssText =
+    "display:none;position:fixed;inset:0;background:#0008;z-index:10000;align-items:end;justify-content:center";
+  panel.innerHTML = `
+    <div style="background:white;width:100%;max-width:640px;max-height:80vh;overflow:auto;padding:20px;border-radius:18px 18px 0 0">
+      <button id="ocgCartClose" style="float:right">Close</button>
+      <h2>Your cart</h2>
+      <div id="ocgCartItems"></div>
+      <h3 id="ocgCartTotal"></h3>
+      <button id="ocgCheckout" style="padding:14px;background:#061b33;color:white;border:0;border-radius:8px">
+        Checkout with Stripe
+      </button>
+      <p id="ocgCartError" style="color:#b42318"></p>
+    </div>`;
+  document.body.append(button, panel);
+
+  function renderCart() {
+    const ids = Object.keys(cart).filter(id => getProduct(id));
+    button.textContent = "🛒 Cart (" + ids.reduce((n, id) => n + cart[id], 0) + ")";
+    document.getElementById("ocgCartItems").innerHTML = ids.map(id => {
+      const p = getProduct(id);
+      return `<p>${p.title} — ${money(p.price)} × ${cart[id]}
+        <button data-remove="${id}">Remove</button></p>`;
+    }).join("") || "<p>Cart is empty.</p>";
+
+    const total = ids.reduce((sum, id) => {
+      const p = getProduct(id);
+      return sum + Number(p.price) * cart[id] + Number(p.shipping || 0);
+    }, 0);
+    document.getElementById("ocgCartTotal").textContent =
+      "Items + shipping: " + money(total) + " (tax at checkout)";
+  }
+
+  function addCartButtons() {
+    document.querySelectorAll("article.product").forEach(card => {
+      if (card.querySelector("[data-add-cart]")) return;
+      const id = (card.id || "").replace("item-", "");
+      const p = getProduct(id);
+      const place = card.querySelector(".paypal-area");
+      if (!p || !place) return;
+
+      const box = document.createElement("div");
+      box.innerHTML = `
+        <input type="number" min="1" value="1" style="width:70px;padding:10px">
+        <button type="button" data-add-cart="${id}">Add to Cart</button>`;
+      place.after(box);
+    });
+  }
+
+  button.onclick = () => {
+    renderCart();
+    panel.style.display = "flex";
+  };
+  document.getElementById("ocgCartClose").onclick = () => panel.style.display = "none";
+
+  document.addEventListener("click", async event => {
+    const add = event.target.closest("[data-add-cart]");
+    if (add) {
+      const p = getProduct(add.dataset.addCart);
+      const qty = Number(add.parentElement.querySelector("input").value);
+      if (!p || !Number.isInteger(qty) || qty < 1) return alert("Enter a valid quantity.");
+      if (p.quantity != null && qty + (cart[p.id] || 0) > Number(p.quantity)) {
+        return alert("Only " + p.quantity + " in stock.");
+      }
+      cart[p.id] = (cart[p.id] || 0) + qty;
+      save();
+      renderCart();
+      return;
+    }
+
+    const remove = event.target.closest("[data-remove]");
+    if (remove) {
+      delete cart[remove.dataset.remove];
+      save();
+      renderCart();
+      return;
+    }
+
+    if (event.target.id === "ocgCheckout") {
+      try {
+        const items = Object.entries(cart).map(([id, quantity]) => ({ id, quantity }));
+        const res = await fetch("/catalog-api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Checkout failed.");
+        location.href = data.url;
+      } catch (error) {
+        document.getElementById("ocgCartError").textContent = error.message;
+      }
+    }
+  });
+
+  new MutationObserver(addCartButtons).observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+  addCartButtons();
+  renderCart();
+})();
+</script>   
 </body>
 </html>
+
+
 
