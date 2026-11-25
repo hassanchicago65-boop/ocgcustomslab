@@ -26,8 +26,6 @@ jobs:
       - name: Extract app source
         run: unzip -o OCG_iPhone_App_Source_PayPal_Checkout_Fix.zip -d app-source
 
-      - name: Use Stripe cart in iOS app
-        run: python3 patch-ios-cart.py app-source/ios/OCGMarketplace/App.swift
 
       - name: Install build tool
         run: brew install xcodegen
