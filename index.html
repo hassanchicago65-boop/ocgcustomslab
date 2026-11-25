@@ -709,11 +709,13 @@ function productCard(p){
       ? "Food tax handled separately"
       : "10.5% tax where applicable";
 
-  const pay = p.paypalCartId
-    ? `<paypal-add-to-cart-button data-id="${p.paypalCartId}"></paypal-add-to-cart-button>`
-    : p.paypal
-    ? `<a class="paypal" href="${p.paypal}" target="_blank" rel="noopener">Buy with PayPal</a>`
-    : `<a class="paypal disabled">Payment Link Coming Soon</a>`;
+  const pay = p.stripeUrl
+    ? `<a class="paypal" href="${p.stripeUrl}" target="_blank" rel="noopener">Buy with Stripe</a>`
+    : `<a class="paypal disabled">Payment Link Coming Soon</a>`;  
+    
+    
+    
+    
 
   let facts = [
     ["Category", p.category],
