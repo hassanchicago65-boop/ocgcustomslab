@@ -232,7 +232,7 @@ export default {
     if (url.pathname === "/catalog-api/admin/products" && request.method === "POST") return saveProduct(request, env, headers);
     const editMatch = url.pathname.match(/^\/catalog-api\/admin\/products\/([a-z0-9-]+)$/);
     if (editMatch && request.method === "PUT") return saveProduct(request, env, headers, editMatch[1]);
-
+if (url.pathname === "/catalog-api/checkout" && request.method === "POST") return createStripeCheckout(request, env, headers);
     return response({ error: "Not found." }, 404, headers);
   }
 };
