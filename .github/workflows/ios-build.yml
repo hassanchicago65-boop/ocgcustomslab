@@ -37,7 +37,7 @@ jobs:
         working-directory: app-source/ios
         run: |
           python3 -c 'from pathlib import Path; p=Path("project.yml"); s=p.read_text(); n="        PRODUCT_BUNDLE_IDENTIFIER: com.ocgcustomslab.marketplace"+chr(10); x="        CODE_SIGN_STYLE: Manual"+chr(10)+"        CODE_SIGN_IDENTITY: Apple Distribution"+chr(10)+"        PROVISIONING_PROFILE_SPECIFIER: OCG_PROFILE_PLACEHOLDER"+chr(10); assert s.count(n)==1; p.write_text(s.replace(n,n+x))' && xcodegen generate
-          python3 -c 'import plistlib; p="Generated/Info.plist"; d=plistlib.load(open(p,"rb")); d["UISupportedInterfaceOrientations~ipad"]=["UIInterfaceOrientationPortrait","UIInterfaceOrientationPortraitUpsideDown","UIInterfaceOrientationLandscapeLeft","UIInterfaceOrientationLandscapeRight"]; plistlib.dump(d,open(p,"wb"))'
+          python3 -c 'import plistlib; p="Generated/Info.plist"; d=plistlib.load(open(p,"rb")); d["NSCameraUsageDescription"]="OCG Marketplace uses the camera to scan your payment card when you choose that option at checkout."; d["UISupportedInterfaceOrientations~ipad"]=["UIInterfaceOrientationPortrait","UIInterfaceOrientationPortraitUpsideDown","UIInterfaceOrientationLandscapeLeft","UIInterfaceOrientationLandscapeRight"]; plistlib.dump(d,open(p,"wb"))'
         
         
 
