@@ -177,7 +177,7 @@ async function createStripeCheckout(request, env, headers) {
 
     addLine(p.title, Math.round(Number(p.price) * 100), item.quantity);
 
-    const shipping = Math.round(Number(p.shipping || 0) * 100);
+    const shipping = Math.round(Number(p.shipping || 0) * 100) + (Number(p.shipping || 0) > 0 ? Math.max(0, item.quantity - 1) * 50 : 0);
     if (shipping > 0) addLine(p.title + " shipping", shipping, 1);
   }
 
@@ -253,7 +253,7 @@ async function createNativePaymentIntent(request, env, headers) {
     form.set(`line_items[${index}][reference]`, product.id);
     form.set(`line_items[${index}][tax_code]`, "txcd_99999999");
     form.set(`line_items[${index}][tax_behavior]`, "exclusive");
-    shippingCents += Math.round(Number(product.shipping || 0) * 100) * item.quantity;
+    shippingCents += Math.round(Number(product.shipping || 0) * 100) + (Number(product.shipping || 0) > 0 ? Math.max(0, item.quantity - 1) * 50 : 0);
   }
   if (shippingCents > 0) {
     form.set("shipping_cost[amount]", String(shippingCents));
