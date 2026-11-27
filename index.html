@@ -1682,7 +1682,7 @@ document.head.appendChild(mobileProductFix);
 
     const total = ids.reduce((sum, id) => {
       const p = getProduct(id);
-      return sum + Number(p.price) * cart[id] + Number(p.shipping || 0);
+      return sum + Number(p.price) * cart[id] + Number(p.shipping || 0) + (Number(p.shipping || 0) > 0 ? Math.max(0, cart[id] - 1) * 0.50 : 0);
     }, 0);
     document.getElementById("ocgCartTotal").textContent =
       "Items + shipping: " + money(total) + " (tax at checkout)";
