@@ -200,6 +200,149 @@ async function createStripeCheckout(request, env, headers) {
 
   return response({ url: result.url }, 200, headers);
 }
+
+async function createNativePaymentIntent(request, env, headers) {
+  const secret = env.STRIPE_SECRET_KEY || env.STRIPE_SECRET;
+  const publishableKey = env.STRIPE_PUBLISHABLE_KEY;
+  if (!secret) return response({ error: "Worker secret STRIPE_SECRET_KEY is missing." }, 503, headers);
+  if (!publishableKey || !publishableKey.startsWith("pk_")) {
+    return response({ error: "Worker variable STRIPE_PUBLISHABLE_KEY is missing or invalid." }, 503, headers);
+  }
+
+  let input;
+  try { input = await request.json(); }
+  catch { return response({ error: "Checkout information is invalid." }, 400, headers); }
+
+  const address = input?.shippingAddress;
+  const required = [address?.name, address?.email, address?.line1, address?.city, address?.state, address?.postalCode];
+  if (!Array.isArray(input?.items) || input.items.length < 1 || input.items.length > 20 ||
+      required.some(value => typeof value !== "string" || !value.trim()) ||
+      !address.email.includes("@") || address.state.trim().length !== 2 ||
+      String(address.country || "US").toUpperCase() !== "US") {
+    return response({ error: "Enter a complete U.S. shipping address and check your cart." }, 400, headers);
+  }
+
+  const form = new URLSearchParams();
+  form.set("currency", "usd");
+  form.set("customer_details[address_source]", "shipping");
+  form.set("customer_details[address][country]", "US");
+  form.set("customer_details[address][line1]", address.line1.trim());
+  if (address.line2?.trim()) form.set("customer_details[address][line2]", address.line2.trim());
+  form.set("customer_details[address][city]", address.city.trim());
+  form.set("customer_details[address][state]", address.state.trim().toUpperCase());
+  form.set("customer_details[address][postal_code]", address.postalCode.trim());
+
+  let shippingCents = 0;
+  let itemCount = 0;
+  for (const item of input.items) {
+    if (typeof item?.id !== "string" || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) {
+      return response({ error: "A cart quantity is invalid." }, 400, headers);
+    }
+    const product = await env.DB.prepare(
+      "SELECT id,title,category,price,shipping,quantity,status FROM products WHERE id=?"
+    ).bind(item.id).first();
+    if (!product || product.status !== "For Sale") return response({ error: "An item is no longer for sale." }, 409, headers);
+    if (product.quantity != null && item.quantity > Number(product.quantity)) {
+      return response({ error: `${product.title} has only ${product.quantity} in stock.` }, 409, headers);
+    }
+
+    const index = itemCount++;
+    const amount = Math.round(Number(product.price) * 100) * item.quantity;
+    if (!Number.isSafeInteger(amount) || amount < 0) return response({ error: "An item price is invalid." }, 400, headers);
+    form.set(`line_items[${index}][amount]`, String(amount));
+    form.set(`line_items[${index}][reference]`, product.id);
+    form.set(`line_items[${index}][tax_code]`, "txcd_99999999");
+    form.set(`line_items[${index}][tax_behavior]`, "exclusive");
+    shippingCents += Math.round(Number(product.shipping || 0) * 100) * item.quantity;
+  }
+  if (shippingCents > 0) {
+    form.set("shipping_cost[amount]", String(shippingCents));
+    form.set("shipping_cost[tax_code]", "txcd_92010001");
+    form.set("shipping_cost[tax_behavior]", "exclusive");
+  }
+
+  const auth = `Basic ${btoa(`${secret}:`)}`;
+  const calculationResponse = await fetch("https://api.stripe.com/v1/tax/calculations", {
+    method: "POST",
+    headers: { Authorization: auth, "Content-Type": "application/x-www-form-urlencoded" },
+    body: form
+  });
+  const calculation = await calculationResponse.json();
+  if (!calculationResponse.ok || !Number.isSafeInteger(calculation.amount_total)) {
+    return response({ error: calculation.error?.message || "Tax and order total could not be calculated." }, 502, headers);
+  }
+
+  const payment = new URLSearchParams();
+  payment.set("amount", String(calculation.amount_total));
+  payment.set("currency", "usd");
+  payment.set("automatic_payment_methods[enabled]", "true");
+  payment.set("description", "OCG Custom Slab order");
+  payment.set("receipt_email", address.email.trim());
+  payment.set("shipping[name]", address.name.trim());
+  payment.set("shipping[address][country]", "US");
+  payment.set("shipping[address][line1]", address.line1.trim());
+  if (address.line2?.trim()) payment.set("shipping[address][line2]", address.line2.trim());
+  payment.set("shipping[address][city]", address.city.trim());
+  payment.set("shipping[address][state]", address.state.trim().toUpperCase());
+  payment.set("shipping[address][postal_code]", address.postalCode.trim());
+  payment.set("metadata[tax_calculation_id]", calculation.id);
+
+  const intentResponse = await fetch("https://api.stripe.com/v1/payment_intents", {
+    method: "POST",
+    headers: { Authorization: auth, "Content-Type": "application/x-www-form-urlencoded" },
+    body: payment
+  });
+  const intent = await intentResponse.json();
+  if (!intentResponse.ok || !intent.client_secret) {
+    return response({ error: intent.error?.message || "In-app payment could not be prepared." }, 502, headers);
+  }
+  return response({
+    clientSecret: intent.client_secret,
+    paymentIntentId: intent.id,
+    publishableKey,
+    amount: calculation.amount_total,
+    tax: calculation.tax_amount_exclusive || 0
+  }, 200, headers);
+}
+
+async function recordNativePayment(request, env, headers) {
+  const secret = env.STRIPE_SECRET_KEY || env.STRIPE_SECRET;
+  if (!secret) return response({ error: "Worker secret STRIPE_SECRET_KEY is missing." }, 503, headers);
+  let input;
+  try { input = await request.json(); }
+  catch { return response({ error: "Payment confirmation is invalid." }, 400, headers); }
+  if (typeof input?.paymentIntentId !== "string" || !/^pi_[A-Za-z0-9]+$/.test(input.paymentIntentId)) {
+    return response({ error: "Payment reference is invalid." }, 400, headers);
+  }
+  const auth = `Basic ${btoa(`${secret}:`)}`;
+  const intentResponse = await fetch(`https://api.stripe.com/v1/payment_intents/${input.paymentIntentId}`, {
+    headers: { Authorization: auth }
+  });
+  const intent = await intentResponse.json();
+  if (!intentResponse.ok) return response({ error: intent.error?.message || "Payment could not be verified." }, 502, headers);
+  if (intent.status !== "succeeded") return response({ error: "Payment has not completed yet." }, 409, headers);
+  const calculationId = intent.metadata?.tax_calculation_id;
+  if (typeof calculationId !== "string" || !calculationId.startsWith("taxcalc_")) {
+    return response({ error: "The tax record for this order could not be found." }, 409, headers);
+  }
+
+  const transaction = new URLSearchParams();
+  transaction.set("calculation", calculationId);
+  transaction.set("reference", intent.id);
+  transaction.set("expand[]", "line_items");
+  const recordResponse = await fetch("https://api.stripe.com/v1/tax/transactions/create_from_calculation", {
+    method: "POST",
+    headers: {
+      Authorization: auth,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Idempotency-Key": `ocg-tax-${intent.id}`
+    },
+    body: transaction
+  });
+  const record = await recordResponse.json();
+  if (!recordResponse.ok) return response({ error: record.error?.message || "The tax record is still processing." }, 502, headers);
+  return response({ recorded: true, taxTransactionId: record.id }, 200, headers);
+}
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -232,7 +375,9 @@ export default {
     if (url.pathname === "/catalog-api/admin/products" && request.method === "POST") return saveProduct(request, env, headers);
     const editMatch = url.pathname.match(/^\/catalog-api\/admin\/products\/([a-z0-9-]+)$/);
     if (editMatch && request.method === "PUT") return saveProduct(request, env, headers, editMatch[1]);
-if (url.pathname === "/catalog-api/checkout" && request.method === "POST") return createStripeCheckout(request, env, headers);
+    if (url.pathname === "/catalog-api/checkout/intent" && request.method === "POST") return createNativePaymentIntent(request, env, headers);
+    if (url.pathname === "/catalog-api/checkout/complete" && request.method === "POST") return recordNativePayment(request, env, headers);
+    if (url.pathname === "/catalog-api/checkout" && request.method === "POST") return createStripeCheckout(request, env, headers);
     return response({ error: "Not found." }, 404, headers);
   }
 };
