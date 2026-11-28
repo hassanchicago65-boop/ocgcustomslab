@@ -709,9 +709,9 @@ function productCard(p){
       ? "Food tax handled separately"
       : "10.5% tax where applicable";
 
-  const pay = p.stripeUrl
-    ? `<a class="paypal" href="${p.stripeUrl}" target="_blank" rel="noopener">Buy with Stripe</a>`
-        : `<a class="paypal" href="#" onclick="this.closest('article.product').querySelector('[data-add-cart]').click();document.getElementById('ocgCartButton').click();return false">Buy with Stripe</a>`;
+  const pay = `<a class="paypal" href="#" onclick="this.closest('article.product').querySelector('[data-add-cart]').click();document.getElementById('ocgCartButton').click();return false">Add to Cart</a>`;
+    
+        
     
     
     
