@@ -45,6 +45,7 @@ function rowToProduct(row) {
     shipping: Number(row.shipping || 0),
     quantity: row.quantity == null ? null : Number(row.quantity),
     stripeUrl: row.stripe_url || "",
+    taxCode: row.tax_code || "txcd_99999999",
     
     status: row.status
   };
@@ -76,6 +77,7 @@ function validProduct(input) {
   if (!Number.isFinite(input.shipping) || input.shipping < 0 || input.shipping > 100000) return "Enter a valid shipping fee.";
   if (input.quantity !== null && (!Number.isInteger(input.quantity) || input.quantity < 0 || input.quantity > 1000000)) return "Enter a whole-number stock quantity.";
     if (typeof input.stripeUrl !== "string" || (input.stripeUrl && !input.stripeUrl.startsWith("https://buy.stripe.com/"))) return "Enter a valid Stripe payment link.";
+  if (typeof input.taxCode !== "string" || !/^txcd_[0-9]{8}$/.test(input.taxCode)) return "Enter a valid Stripe tax code.";
    
   if (!["For Sale", "Draft", "Archived"].includes(input.status)) return "Choose a valid listing status.";
   return "";
@@ -106,13 +108,13 @@ async function saveProduct(request, env, headers, id = "") {
   const issue = validProduct(input);
   if (issue) return response({ error: issue }, 400, headers);
   const productId = id || makeId(input.title);
- const values = [productId, input.category, input.title.trim(), input.subtitle.trim(), JSON.stringify(input.images), input.price, input.shipping, input.quantity, input.paypalCartId.trim(), input.paypal.trim(), input.stripeUrl.trim(), input.status]; 
+ const values = [productId, input.category, input.title.trim(), input.subtitle.trim(), JSON.stringify(input.images), input.price, input.shipping, input.quantity, input.paypalCartId.trim(), input.paypal.trim(), input.stripeUrl.trim(), input.taxCode.trim(), input.status]; 
   if (id) {
-const result = await env.DB.prepare("UPDATE products SET category=?,title=?,subtitle=?,images_json=?,price=?,shipping=?,quantity=?,paypal_cart_id=?,paypal_url=?,stripe_url=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?")
+const result = await env.DB.prepare("UPDATE products SET category=?,title=?,subtitle=?,images_json=?,price=?,shipping=?,quantity=?,paypal_cart_id=?,paypal_url=?,stripe_url=?,tax_code=?,status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?")
       .bind(...values.slice(1), id).run();
     if (!result.meta?.changes) return response({ error: "This listing could not be found." }, 404, headers);
   } else {
- await env.DB.prepare("INSERT INTO products (id,category,title,subtitle,images_json,price,shipping,quantity,paypal_cart_id,paypal_url,stripe_url,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)") 
+ await env.DB.prepare("INSERT INTO products (id,category,title,subtitle,images_json,price,shipping,quantity,paypal_cart_id,paypal_url,stripe_url,tax_code,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)") 
       .bind(...values).run();
   }
   const row = await env.DB.prepare("SELECT * FROM products WHERE id=?").bind(productId).first();
@@ -154,7 +156,7 @@ async function createStripeCheckout(request, env, headers) {
     }
 
     const p = await env.DB.prepare(
-      "SELECT id,title,price,shipping,quantity,status FROM products WHERE id=?"
+      "SELECT id,title,price,shipping,quantity,status,tax_code FROM products WHERE id=?"
     ).bind(item.id).first();
 
     if (!p || p.status !== "For Sale") {
@@ -167,18 +169,19 @@ async function createStripeCheckout(request, env, headers) {
       }, 409, headers);
     }
 
-    const addLine = (name, cents, qty) => {
+    const addLine = (name, cents, qty, taxCode) => {
       form.set(`line_items[${line}][price_data][currency]`, "usd");
       form.set(`line_items[${line}][price_data][unit_amount]`, String(cents));
       form.set(`line_items[${line}][price_data][product_data][name]`, name);
+      form.set(`line_items[${line}][price_data][product_data][tax_code]`, taxCode);
       form.set(`line_items[${line}][quantity]`, String(qty));
       line++;
     };
 
-    addLine(p.title, Math.round(Number(p.price) * 100), item.quantity);
+    addLine(p.title, Math.round(Number(p.price) * 100), item.quantity, p.tax_code || "txcd_99999999");
 
     const shipping = Math.round(Number(p.shipping || 0) * 100) + (Number(p.shipping || 0) > 0 ? Math.max(0, item.quantity - 1) * 50 : 0);
-    if (shipping > 0) addLine(p.title + " shipping", shipping, 1);
+    if (shipping > 0) addLine(p.title + " shipping", shipping, 1, "txcd_92010001");
   }
 
   const stripe = await fetch("https://api.stripe.com/v1/checkout/sessions", {
@@ -239,7 +242,7 @@ async function createNativePaymentIntent(request, env, headers) {
       return response({ error: "A cart quantity is invalid." }, 400, headers);
     }
     const product = await env.DB.prepare(
-      "SELECT id,title,category,price,shipping,quantity,status FROM products WHERE id=?"
+      "SELECT id,title,category,price,shipping,quantity,status,tax_code FROM products WHERE id=?"
     ).bind(item.id).first();
     if (!product || product.status !== "For Sale") return response({ error: "An item is no longer for sale." }, 409, headers);
     if (product.quantity != null && item.quantity > Number(product.quantity)) {
@@ -251,7 +254,7 @@ async function createNativePaymentIntent(request, env, headers) {
     if (!Number.isSafeInteger(amount) || amount < 0) return response({ error: "An item price is invalid." }, 400, headers);
     form.set(`line_items[${index}][amount]`, String(amount));
     form.set(`line_items[${index}][reference]`, product.id);
-    form.set(`line_items[${index}][tax_code]`, "txcd_99999999");
+    form.set(`line_items[${index}][tax_code]`, product.tax_code || "txcd_99999999");
     form.set(`line_items[${index}][tax_behavior]`, "exclusive");
     shippingCents += Math.round(Number(product.shipping || 0) * 100) + (Number(product.shipping || 0) > 0 ? Math.max(0, item.quantity - 1) * 50 : 0);
   }
