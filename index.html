@@ -711,7 +711,7 @@ function productCard(p){
 
   const pay = p.stripeUrl
     ? `<a class="paypal" href="${p.stripeUrl}" target="_blank" rel="noopener">Buy with Stripe</a>`
-    : `<a class="paypal disabled">Payment Link Coming Soon</a>`;  
+        : `<a class="paypal" href="#" onclick="this.closest('article.product').querySelector('[data-add-cart]').click();document.getElementById('ocgCartButton').click();return false">Buy with Stripe</a>`;
     
     
     
